@@ -1,66 +1,100 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# <img src="database/seeders/assets/images/logo.png" width="45" align="center" /> BalaKutaK CMS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Laravel Version](https://img.shields.io/badge/Laravel-11.x-red.svg)](https://laravel.com)
+[![Modern UI](https://img.shields.io/badge/UI-Premium-blue.svg)](#)
 
-## About Laravel
+**BalaKutaK** adalah sebuah Content Management System (CMS) berbasis open source yang dirancang untuk memberikan kemudahan, fleksibilitas, dan kebebasan dalam membangun serta mengelola website secara efisien. Dikembangkan dengan semangat kolaborasi, BalaKutaK hadir sebagai solusi bagi institusi pendidikan, organisasi, hingga komunitas digital yang membutuhkan platform web yang ringan, adaptif, dan elegan.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Fitur Utama (Premium Features)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+*   **💎 Premium Immersive UI**: Antarmuka modern dengan efek gradasi sinematik, animasi AOS, dan elemen dekoratif yang mewah.
+*   **🎨 Dynamic Theme Engine**: Mendukung pergantian tema secara instan (tersedia tema *Navy Blue* & *Green Gold*).
+*   **🤝 Sponsor Management**: Modul khusus untuk mengelola logotipe mitra dan sponsor yang terintegrasi di footer.
+*   **🎓 Academic Suite**: Pengelolaan lengkap untuk kalender akademik, layanan kurikulum, profil dosen, dan agenda kegiatan.
+*   **🛡️ Secure Admin Panel**: Didukung oleh AdminLTE 3 dengan sistem Role & Permission yang ketat (Super Admin & Admin).
+*   **📱 Ultra Responsive**: Tampilan optimal di perangkat mobile, tablet, maupun desktop.
+*   **🔍 SEO Optimized**: Struktur HTML semantik, meta tag dinamis, dan performa loading yang cepat.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🚀 Panduan Instalasi (Quick Start)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Ikuti langkah-langkah berikut untuk menjalankan BalaKutaK CMS di lingkungan lokal Anda:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Persyaratan Sistem
+*   PHP >= 8.2
+*   Composer
+*   Node.js & NPM
+*   MySQL / MariaDB
 
-## Laravel Sponsors
+### 2. Langkah Instalasi
+```bash
+# Clone repository
+git clone https://github.com/riyantoabuwinner/balakutak.git
+cd balakutak
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Install dependensi PHP
+composer install
 
-### Premium Partners
+# Install dependensi Frontend
+npm install
+npm run build
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# Salin konfigurasi environment
+cp .env.example .env
 
-## Contributing
+# Generate application key
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Konfigurasi Database
+Sesuaikan pengaturan database di file `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database_anda
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Code of Conduct
+### 4. Migrasi & Seeding (PENTING)
+Jalankan perintah ini untuk membangun struktur tabel dan memasukkan data identitas BalaKutaK (termasuk logo & branding):
+```bash
+php artisan migrate:fresh --seed
+php artisan storage:link
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 5. Jalankan Server
+```bash
+php artisan serve
+```
+Akses website di: `http://127.0.0.1:8000`
+Akses Admin di: `http://127.0.0.1:8000/admin` (Login Default: `superadmin@prodi.ac.id` | `password`)
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🛠️ Stack Teknologi
 
-## License
+*   **Backend**: Laravel 11 (PHP 8.2+)
+*   **Frontend**: Bootstrap 5, Alpine.js, Swiper.js, AOS (Animate On Scroll)
+*   **Admin Template**: AdminLTE 3
+*   **Icons**: Font Awesome 6
+*   **Typography**: Inter & Poppins (Google Fonts)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🦑 Filosofi Nama
+**BalaKutaK** (Cumi-cumi/Sotong) dipilih sebagai simbol fleksibilitas, kecerdasan, dan kemampuan untuk beradaptasi dengan cepat di berbagai lingkungan (seperti cumi-cumi yang dapat berubah warna dan bentuk). BalaKutaK CMS diharapkan menjadi platform yang lincah namun kokoh dalam memenuhi kebutuhan digital penggunanya.
+
+---
+
+## 📄 Lisensi
+BalaKutaK CMS adalah software open-source yang dilisensikan di bawah [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+**Dikembangkan dengan ❤️ oleh [riyantoabuwinner](https://github.com/riyantoabuwinner)**
