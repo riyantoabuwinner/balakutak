@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Laravel') }} - Login</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans text-gray-900 antialiased min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
+    {{-- High-Performance Full-Page Background --}}
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute inset-0 bg-indigo-950/60 backdrop-blur-[2px] z-10"></div>
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/login-bg-balakutak.jpg') }}'); background-attachment: fixed;"></div>
+    </div>
+
+    <div class="relative z-20 flex flex-col items-center justify-center w-full max-w-6xl py-12">
+        {{-- Glassmorphism Login Card --}}
+        <div class="w-full flex shadow-[0_30px_100px_rgba(0,0,0,0.5)] rounded-[3rem] overflow-hidden bg-white min-h-[600px] border border-white/20">
+        
+        <!-- Left Side - Branding -->
+        <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white flex-col justify-between p-12 relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                </svg>
+            </div>
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+            <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+
+            <div class="relative z-10 flex flex-col justify-center items-center text-center h-full">
+                {{-- System Logo (From Settings) --}}
+                <div class="mb-8">
+                    @php $siteLogo = \App\Models\Setting::get('site_logo') @endphp
+                    @if($siteLogo)
+                        <img src="{{ asset('storage/'.$siteLogo) }}" alt="Site Logo" class="h-20 w-auto filter brightness-0 invert drop-shadow-lg opacity-90">
+                    @endif
+                </div>
+
+                <h2 class="text-4xl font-bold mb-2 leading-tight drop-shadow-xl">{{ \App\Models\Setting::get('site_name', 'Your Website Name') }}</h2>
+                <h3 class="text-2xl font-medium text-indigo-100/80 drop-shadow-lg">{{ \App\Models\Setting::get('site_sub_name', 'Your Website Subname') }}</h3>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="w-full md:w-1/2 flex items-center justify-center p-8 sm:p-12 relative bg-white">
+            <div class="w-full max-w-md">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+                    <p class="text-gray-500">Please sign in to your account</p>
+                </div>
+
+                <!-- Session Status -->
+                <x-auth-session-status class="mb-4" :status="session('status')" />
+
+                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                    @csrf
+
+
+
+                    <!-- Email Address -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                                </svg>
+                            </div>
+                            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out" placeholder="you@example.com">
+                        </div>
+                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                            @if (Route::has('password.request'))
+                                <a href="{{ route('password.request') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+                            @endif
+                        </div>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                            </div>
+                            <input id="password" type="password" name="password" required autocomplete="current-password" class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out" placeholder="••••••••">
+                        </div>
+                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                    </div>
+
+                    <!-- Captcha and Honeypot Removed to Simplify Login -->
+
+                    <!-- Remember Me -->
+                    <div class="flex items-center">
+                        <input id="remember_me" type="checkbox" name="remember" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <label for="remember_me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div>
+                        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                            Sign in
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- Exterior Signature Section - Aligned Under Form Area --}}
+        <div class="w-full flex justify-end mt-8 pr-12 sm:pr-16">
+            <div class="w-full md:w-1/2 flex flex-col items-center justify-center gap-3 animate-fade-in">
+                {{-- Original Dark Official Logo --}}
+                <img src="{{ asset('images/balakutak-logo-official.png') }}" alt="Balakutak Logo" class="h-6 w-auto filter drop-shadow-sm opacity-80">
+                {{-- Dark Ink Metadata Badge --}}
+                <span class="inline-flex items-center px-3 py-1 text-[9px] font-black bg-indigo-950/10 text-indigo-950 rounded-lg border border-indigo-950/10 tracking-[0.3em] uppercase">Version 1.0</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

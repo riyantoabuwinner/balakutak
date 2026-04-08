@@ -1,0 +1,408 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Post;
+use App\Models\Category;
+use App\Models\Tag;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
+use App\Models\Gallery;
+
+class PostController extends Controller
+{
+    use \App\Traits\HasMedia;
+    public function index(Request $request)
+    {
+        $query = Post::with(['user', 'category'])
+            ->when($request->search, fn($q) => $q->where('title', 'like', "%{$request->search}%"))
+            ->when($request->status, fn($q) => $q->where('status', $request->status))
+            ->when($request->type, fn($q) => $q->where('type', $request->type))
+            ->when($request->category_id, fn($q) => $q->where('category_id', $request->category_id))
+            ->latest();
+
+        // Editors & Dosens only see their own posts
+        if (!auth()->user()->hasRole(['Super Admin', 'Admin Prodi'])) {
+            $query->where('user_id', auth()->id());
+        }
+
+        $posts = $query->paginate(15)->withQueryString();
+        $categories = Category::all();
+
+        return view('admin.posts.index', compact('posts', 'categories'));
+    }
+
+    public function create()
+    {
+        $categories = Category::orderBy('name')->get();
+        $tags = Tag::orderBy('name')->get();
+        return view('admin.posts.create', compact('categories', 'tags'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'nullable|string',
+            'excerpt' => 'nullable|string|max:500',
+            'category_id' => 'nullable|exists:categories,id',
+            'tags' => 'nullable|array',
+            'sdgs' => 'nullable|array',
+            'type' => 'required|in:post,news,research,community',
+            'status' => 'required|in:draft,published,archived',
+            'is_featured' => 'boolean',
+            'allow_comments' => 'boolean',
+            'featured_image' => 'nullable|string',
+            'featured_image_file' => 'nullable|image|max:4096',
+            'published_at' => 'nullable|date',
+            'seo_title' => 'nullable|string|max:60',
+            'seo_description' => 'nullable|string|max:160',
+            'seo_keywords' => 'nullable|string|max:255',
+        ]);
+
+        $slug = Str::slug($validated['title']);
+        $slug = $this->uniqueSlug($slug, Post::class);
+
+        $published_at = $validated['published_at'] ?? now();
+        if ($validated['status'] !== 'published') {
+            $published_at = null;
+        }
+
+        $post = Post::create([
+            ...$validated,
+
+            'user_id' => auth()->id(),
+            'slug' => $slug,
+            'is_featured' => $request->boolean('is_featured'),
+            'allow_comments' => $request->boolean('allow_comments', true),
+            'published_at' => $published_at,
+            'seo_meta' => [
+                'title' => $request->seo_title,
+                'description' => $request->seo_description,
+                'keywords' => $request->seo_keywords,
+            ],
+        ]);
+
+        // Handle Image via HasMedia logic
+        $path = $this->handleMedia('featured_image', 'posts', $post->title);
+        if ($path) {
+            $post->update(['featured_image' => $path]);
+
+            // Sync with Gallery (Public Album)
+            Gallery::updateOrCreate(
+                ['title' => $post->title, 'album' => 'Artikel'],
+                [
+                    'type' => 'photo',
+                    'file_path' => $path,
+                    'is_active' => true,
+                    'language' => $post->language ?? app()->getLocale(),
+                ]
+            );
+        }
+
+        if ($request->tags) {
+            $tagIds = [];
+            foreach ($request->tags as $tagInput) {
+                if (is_numeric($tagInput)) {
+                    $tagIds[] = $tagInput;
+                }
+                else {
+                    $newTag = Tag::firstOrCreate([
+                        'name' => $tagInput,
+                        'slug' => Str::slug($tagInput)
+                    ]);
+                    $tagIds[] = $newTag->id;
+                }
+            }
+            $post->tags()->sync($tagIds);
+        }
+
+        return redirect()->route('admin.posts.index')
+            ->with('success', 'Artikel berhasil disimpan!');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'xml_file' => 'required|file|mimetypes:text/xml,application/xml|max:51200'
+        ]);
+
+        // Increase max execution time for large imports
+        ini_set('max_execution_time', 300);
+
+        $file = $request->file('xml_file');
+
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_file($file->getRealPath());
+
+        if (!$xml) {
+            return back()->withErrors(['xml_file' => 'Format file XML tidak valid atau rusak.']);
+        }
+
+        $namespaces = $xml->getNamespaces(true);
+        $wpNamespace = $namespaces['wp'] ?? 'http://wordpress.org/export/1.2/';
+        $contentNamespace = $namespaces['content'] ?? 'http://purl.org/rss/1.0/modules/content/';
+
+        $importedCount = 0;
+        $defaultCategory = Category::firstOrCreate([
+            'name' => 'Berita & Informasi',
+            'slug' => 'berita-informasi'
+        ]);
+
+        foreach ($xml->channel->item as $item) {
+            $wpMeta = $item->children($wpNamespace);
+
+            // Only import posts
+            if ((string)$wpMeta->post_type === 'post') {
+                $title = (string)$item->title;
+                $slug = (string)$wpMeta->post_name ?: Str::slug($title);
+
+                // Content mapped from <content:encoded>
+                $contentNode = $item->children($contentNamespace);
+                $content = (string)$contentNode->encoded;
+
+                // If content is empty or short, we might skip or still import
+                if (empty(trim($title)))
+                    continue;
+
+                $status = (string)$wpMeta->status === 'publish' ? 'published' : 'draft';
+                $postDate = (string)$wpMeta->post_date;
+                $publishedAt = ($postDate && $postDate !== '0000-00-00 00:00:00') ?\Carbon\Carbon::parse($postDate) : now();
+
+                // Categorization
+                $categoryId = $defaultCategory->id;
+                foreach ($item->category as $cat) {
+                    if ((string)$cat['domain'] === 'category') {
+                        $catName = (string)$cat;
+                        // Avoid empty categories
+                        if (!empty(trim($catName))) {
+                            $dbCategory = Category::firstOrCreate([
+                                'name' => $catName,
+                                'slug' => Str::slug($catName)
+                            ]);
+                            $categoryId = $dbCategory->id;
+                            break; // prioritize first found category
+                        }
+                    }
+                }
+
+                $postSlug = $this->uniqueSlug($slug, Post::class);
+
+                // Download all images in content and update URLs
+                $content = $this->processImportContentImages($content);
+
+                // Extract featured image from content if exists
+                $featuredImage = null;
+                if (preg_match('/<img.+src=[\'"](?P<src>.+?)[\'"].*>/i', $content, $imageMatch)) {
+                    $localUrl = $imageMatch['src'];
+                    $storageUrl = Storage::disk('public')->url('');
+                    $featuredImage = str_replace($storageUrl, '', $localUrl);
+                }
+
+                $post = Post::create([
+                    'user_id' => auth()->id(),
+                    'title' => Str::limit($title, 255, ''),
+                    'slug' => Str::limit($postSlug, 255, ''),
+                    'content' => $content,
+                    'excerpt' => Str::limit(strip_tags($content), 200),
+                    'category_id' => $categoryId,
+                    'type' => 'news',
+                    'status' => $status,
+                    'published_at' => $publishedAt,
+                    'featured_image' => $featuredImage,
+                ]);
+
+                // Create Gallery entry for featured image
+                if ($featuredImage) {
+                    Gallery::updateOrCreate(
+                        ['title' => $post->title, 'album' => 'Imported'],
+                        [
+                            'type' => 'photo',
+                            'file_path' => $featuredImage,
+                            'is_active' => true,
+                            'language' => app()->getLocale(),
+                        ]
+                    );
+                }
+
+                $importedCount++;
+            }
+        }
+
+        return redirect()->route('admin.posts.index')
+            ->with('success', "Berhasil mengimpor {$importedCount} artikel dari XML.");
+    }
+
+    public function edit(Post $post)
+    {
+        $categories = Category::orderBy('name')->get();
+        $tags = Tag::orderBy('name')->get();
+        $selectedTags = $post->tags->pluck('id')->toArray();
+        return view('admin.posts.edit', compact('post', 'categories', 'tags', 'selectedTags'));
+    }
+
+    public function update(Request $request, Post $post)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'nullable|string',
+            'excerpt' => 'nullable|string|max:500',
+            'category_id' => 'nullable|exists:categories,id',
+            'tags' => 'nullable|array',
+            'sdgs' => 'nullable|array',
+            'type' => 'required|in:post,news,research,community',
+            'status' => 'required|in:draft,published,archived',
+            'is_featured' => 'boolean',
+            'allow_comments' => 'boolean',
+            'featured_image' => 'nullable|string',
+            'featured_image_file' => 'nullable|image|max:4096',
+            'published_at' => 'nullable|date',
+            'seo_title' => 'nullable|string|max:60',
+            'seo_description' => 'nullable|string|max:160',
+            'seo_keywords' => 'nullable|string|max:255',
+        ]);
+
+
+        $published_at = $validated['published_at'] ?? $post->published_at;
+        if ($validated['status'] !== 'published') {
+            $published_at = null;
+        }
+        elseif (!$published_at) {
+            $published_at = now();
+        }
+
+        $path = $this->handleMedia('featured_image', 'posts', $post->title);
+
+        $postData = [
+            ...$validated,
+            'is_featured' => $request->boolean('is_featured'),
+            'allow_comments' => $request->boolean('allow_comments', true),
+            'published_at' => $published_at,
+            'seo_meta' => [
+                'title' => $request->seo_title,
+                'description' => $request->seo_description,
+                'keywords' => $request->seo_keywords,
+            ],
+        ];
+
+        if ($path) {
+            $postData['featured_image'] = $path;
+
+            // Sync with Gallery
+            Gallery::updateOrCreate(
+                ['title' => $validated['title'], 'album' => 'Artikel'],
+                [
+                    'type' => 'photo',
+                    'file_path' => $path,
+                    'is_active' => true,
+                    'language' => $post->language ?? app()->getLocale(),
+                ]
+            );
+        }
+
+        $post->update($postData);
+
+        $tagIds = [];
+        if ($request->tags) {
+            foreach ($request->tags as $tagInput) {
+                if (is_numeric($tagInput)) {
+                    $tagIds[] = $tagInput;
+                }
+                else {
+                    $newTag = Tag::firstOrCreate([
+                        'name' => $tagInput,
+                        'slug' => Str::slug($tagInput)
+                    ]);
+                    $tagIds[] = $newTag->id;
+                }
+            }
+        }
+        $post->tags()->sync($tagIds);
+
+        return redirect()->route('admin.posts.index')
+            ->with('success', 'Artikel berhasil diperbarui!');
+    }
+
+    public function destroy(Post $post)
+    {
+        $post->delete();
+        return back()->with('success', 'Artikel berhasil dihapus!');
+    }
+
+    public function show(Post $post)
+    {
+        return view('admin.posts.show', compact('post'));
+    }
+
+    public function toggleStatus(Post $post)
+    {
+        $post->update([
+            'status' => $post->status === 'published' ? 'draft' : 'published',
+            'published_at' => $post->status !== 'published' ? now() : null,
+        ]);
+        return back()->with('success', 'Status artikel diperbarui!');
+    }
+
+    protected function uniqueSlug(string $slug, string $model): string
+    {
+        $original = $slug;
+        $i = 1;
+        while ($model::where('slug', $slug)->exists()) {
+            $slug = "{$original}-{$i}";
+            $i++;
+        }
+        return $slug;
+    }
+
+    private function processImportContentImages($content)
+    {
+        return preg_replace_callback('/<img.+src=[\'"](?P<src>.+?)[\'"].*>/i', function($matches) {
+            $src = $matches['src'];
+            
+            // Skip if already local or internal
+            if (str_contains($src, url('')) || str_contains($src, 'storage/') || str_starts_with($src, '/')) {
+                return $matches[0];
+            }
+
+            $localPath = $this->downloadAndStoreImage($src);
+            if ($localPath) {
+                $localUrl = Storage::disk('public')->url($localPath);
+                return str_replace($src, $localUrl, $matches[0]);
+            }
+
+            return $matches[0];
+        }, $content);
+    }
+
+    private function downloadAndStoreImage($url)
+    {
+        try {
+            if (str_starts_with($url, 'data:image/')) {
+                $parts = explode(";base64,", $url);
+                if (count($parts) === 2) {
+                    $image_type_aux = explode("data:image/", $parts[0]);
+                    $image_type = $image_type_aux[1] ?? 'png';
+                    $image_base64 = base64_decode($parts[1]);
+                    $path = 'gallery/imported-' . Str::random(20) . '.' . $image_type;
+                    Storage::disk('public')->put($path, $image_base64);
+                    return $path;
+                }
+            } else {
+                $response = \Illuminate\Support\Facades\Http::timeout(10)->get($url);
+                if ($response->successful()) {
+                    $ext = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+                    $path = 'gallery/imported-' . Str::random(20) . '.' . $ext;
+                    Storage::disk('public')->put($path, $response->body());
+                    return $path;
+                }
+            }
+        } catch (\Exception $e) {
+            // Silent fail, use original URL
+        }
+        return null;
+    }
+}

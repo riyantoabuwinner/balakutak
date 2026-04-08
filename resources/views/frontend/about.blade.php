@@ -1,0 +1,381 @@
+@extends('layouts.frontend')
+
+@push('title'){{ __('Detail Profil') }} - @endpush
+
+@push('styles')
+<style>
+/* ── HERO ── */
+.about-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #1a56a0 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 120px 0 80px;
+}
+.about-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.about-hero .badge-pill-outline {
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: .78rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: inline-block;
+    color: rgba(255,255,255,.85);
+    backdrop-filter: blur(4px);
+}
+.hero-deco {
+    position: absolute; right: 0; top: 50%;
+    transform: translateY(-50%);
+    font-size: 18rem;
+    opacity: .04;
+    color: #fff;
+    pointer-events: none;
+}
+
+/* ── SECTIONS ── */
+.section-label {
+    font-size: .7rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.gradient-bar {
+    width: 50px; height: 4px;
+    background: linear-gradient(90deg, var(--primary,#1a56a0), #60a5fa);
+    border-radius: 4px;
+    margin: .75rem 0 1.5rem;
+}
+.about-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0,0,0,.07);
+    border: 1px solid rgba(0,0,0,.05);
+    transition: transform .3s, box-shadow .3s;
+}
+.about-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.12); }
+
+/* ── LEADER CARD ── */
+.leader-photo-wrap {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #e8f0fe;
+    flex-shrink: 0;
+    background: #f1f5f9;
+}
+.leader-photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.leader-icon-placeholder {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a56a0, #60a5fa);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ── VISION / MISSION ── */
+.vm-card {
+    border-radius: 20px;
+    padding: 2.5rem;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+.vm-card.vision-card {
+    background: linear-gradient(135deg, #0f172a, #1e3a5f);
+    color: #fff;
+}
+.vm-card.mission-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+.vm-card .vm-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+}
+.vm-card.vision-card .vm-icon { background: rgba(255,255,255,.12); color: #93c5fd; }
+.vm-card.mission-card .vm-icon { background: #e8f0fe; color: #1a56a0; }
+.vm-card .deco-circle {
+    position: absolute; bottom: -30px; right: -30px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    opacity: .06;
+    background: #fff;
+}
+
+/* ── ACCREDITATION / CERT ── */
+.cert-card {
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    transition: all .3s;
+    overflow: hidden;
+}
+.cert-card:hover { border-color: #1a56a0; box-shadow: 0 8px 24px rgba(26,86,160,.12); }
+.cert-badge {
+    background: linear-gradient(135deg, #1a56a0, #3b82f6);
+    color: #fff;
+    border-radius: 10px 10px 0 0;
+    padding: 1rem;
+    display: flex; align-items: center; gap: .75rem;
+}
+.cert-badge i { font-size: 1.4rem; }
+
+/* ── VIDEO ── */
+.video-frame-wrap {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18);
+    position: relative;
+}
+.video-frame-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(15,23,42,.4));
+    z-index: 1; pointer-events: none;
+}
+</style>
+@endpush
+
+@section('content')
+
+{{-- ── HERO (matches static pages) ── --}}
+<div class="page-header-premium py-5 text-white position-relative overflow-hidden">
+    <div class="page-header-pattern"></div>
+    <div class="container py-4 position-relative z-1">
+        <div class="row align-items-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-2 text-white-50">
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-white-50">{{ __('Beranda') }}</a></li>
+                        <li class="breadcrumb-item active text-white" aria-current="page">{{ __('Detail Profil') }}</li>
+                    </ol>
+                </nav>
+                <h1 class="display-4 fw-bold mb-0">{{ __('Detail Profil') }}</h1>
+            </div>
+        </div>
+    </div>
+    <div class="page-header-logo">
+        @php 
+            $logo = \App\Models\Setting::get('site_logo_white');
+            if (!$logo) {
+                $logo = \App\Models\Setting::get('site_logo');
+            }
+        @endphp
+        @if($logo)
+            <img src="{{ asset('storage/'.$logo) }}" alt="Logo">
+        @endif
+    </div>
+</div>
+
+{{-- ── ABOUT INSTITUTION (full text) ── --}}
+@if($aboutInstitution)
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9" data-aos="fade-up">
+                <div class="about-card p-5">
+                    <span class="section-label text-primary">{{ __('Detail Institusi') }}</span>
+                    <div class="gradient-bar"></div>
+                    <p class="text-secondary fs-5 lh-lg mb-0" style="text-align:justify;">
+                        {!! $aboutInstitution !!}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ── STATIC PAGE CONTENT (if any) ── --}}
+@if(isset($page) && $page?->content)
+<section class="py-4 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 fs-5 text-secondary" data-aos="fade-up" style="text-align:justify;">
+                {!! $page->content !!}
+            </div>
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ── LEADER SAMBUTAN ── --}}
+@if($greeting || $headName)
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="section-label text-primary"><i class="fas fa-graduation-cap me-2"></i>{{ __('Sambutan Pimpinan') }}</span>
+                <div class="gradient-bar"></div>
+
+                <div class="d-flex align-items-center gap-4 mb-4">
+                    @if($kaprodiPhoto)
+                    <div class="leader-photo-wrap">
+                        <img src="{{ asset('storage/'.$kaprodiPhoto) }}" alt="{{ $headName }}">
+                    </div>
+                    @else
+                    <div class="leader-icon-placeholder">
+                        <i class="fas fa-user-tie fa-2x text-white"></i>
+                    </div>
+                    @endif
+                    <div>
+                        <h4 class="fw-bold mb-1 text-dark">{{ $headName }}</h4>
+                        <span class="text-primary fw-semibold small"><i class="fas fa-award me-1"></i>{{ __('Ketua Program Studi') }}</span>
+                    </div>
+                </div>
+
+                <blockquote class="border-start border-primary border-4 ps-4 text-secondary lh-lg" style="text-align:justify; font-size:1.05rem;">
+                    {!! $greeting !!}
+                </blockquote>
+            </div>
+
+            <div class="col-lg-6" data-aos="fade-left">
+                @if($videoEmbed)
+                <div class="video-frame-wrap">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="{{ $videoEmbed }}" title="Video Profil" allowfullscreen frameborder="0"></iframe>
+                    </div>
+                </div>
+                @else
+                <div class="about-card p-5 d-flex flex-column align-items-center justify-content-center text-center" style="min-height:280px;">
+                    <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#1a56a0,#60a5fa);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
+                        <i class="fas fa-play fa-xl text-white"></i>
+                    </div>
+                    <p class="text-muted mb-0">Video profil belum tersedia</p>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ── VISI & MISI ── --}}
+@if($vision || $mission)
+<section class="py-5" style="background:#f0f4ff;">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-label text-primary">{{ __('Arah & Tujuan') }}</span>
+            <div class="gradient-bar mx-auto" style="margin:auto;"></div>
+            <h2 class="fw-bold fs-1">{{ __('Visi & Misi') }}</h2>
+        </div>
+        <div class="row g-4">
+            @if($vision)
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="vm-card vision-card h-100">
+                    <div class="vm-icon"><i class="fas fa-eye"></i></div>
+                    <h3 class="fw-bold mb-3">{{ __('Visi') }}</h3>
+                    <p class="opacity-85 lh-lg mb-0" style="text-align:justify;">{!! $vision !!}</p>
+                    <div class="deco-circle"></div>
+                </div>
+            </div>
+            @endif
+            @if($mission)
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="vm-card mission-card h-100">
+                    <div class="vm-icon"><i class="fas fa-bullseye"></i></div>
+                    <h3 class="fw-bold mb-3 text-dark">{{ __('Misi') }}</h3>
+                    <div class="text-secondary lh-lg" style="text-align:justify;">{!! $mission !!}</div>
+                    <div class="deco-circle" style="background:#1a56a0;"></div>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ── AKREDITASI & SERTIFIKASI ── --}}
+@if($accreditation || $certAccreditation || count($certOthers) > 0)
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-label text-primary"><i class="fas fa-certificate me-2"></i>{{ __('Kualitas & Kepercayaan') }}</span>
+            <div class="gradient-bar mx-auto" style="margin:auto;"></div>
+            <h2 class="fw-bold fs-1">{{ __('Akreditasi & Sertifikasi') }}</h2>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            {{-- Akreditasi BAN-PT --}}
+            @if($accreditation || $certAccreditation)
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="cert-card h-100">
+                    <div class="cert-badge">
+                        <i class="fas fa-award"></i>
+                        <div>
+                            <div class="fw-bold">Akreditasi</div>
+                            <small class="opacity-75">BAN-PT / LAM</small>
+                        </div>
+                    </div>
+                    <div class="p-4 text-center">
+                        @if($certAccreditation)
+                            @php $ext = pathinfo($certAccreditation, PATHINFO_EXTENSION); @endphp
+                            @if(in_array(strtolower($ext), ['jpg','jpeg','png','webp']))
+                                <img src="{{ asset('storage/'.$certAccreditation) }}" alt="Sertifikat Akreditasi" class="img-fluid rounded mb-3" style="max-height:160px; object-fit:contain;">
+                            @else
+                                <div class="mb-3 py-3">
+                                    <i class="fas fa-file-pdf fa-4x text-danger opacity-75"></i>
+                                </div>
+                                <a href="{{ asset('storage/'.$certAccreditation) }}" target="_blank" class="btn btn-outline-primary btn-sm mb-3">
+                                    <i class="fas fa-eye me-1"></i> Lihat Sertifikat
+                                </a>
+                            @endif
+                        @else
+                            <div class="py-3"><i class="fas fa-award fa-4x" style="color:#1a56a0; opacity:.3;"></i></div>
+                        @endif
+                        @if($accreditation)
+                        <div class="fw-bold fs-4 text-primary">{{ $accreditation }}</div>
+                        <small class="text-muted">Status Akreditasi</small>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- Sertifikasi Lainnya --}}
+            @foreach($certOthers as $i => $cert)
+            @if(!empty($cert['name']))
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ ($i+2)*100 }}">
+                <div class="cert-card h-100">
+                    <div class="cert-badge" style="background:linear-gradient(135deg, #334155, #64748b);">
+                        <i class="fas fa-certificate"></i>
+                        <div>
+                            <div class="fw-bold">{{ $cert['name'] }}</div>
+                            <small class="opacity-75">Sertifikasi</small>
+                        </div>
+                    </div>
+                    <div class="p-4 text-center">
+                        @if(!empty($cert['file']))
+                            @php $ext2 = pathinfo($cert['file'], PATHINFO_EXTENSION); @endphp
+                            @if(in_array(strtolower($ext2), ['jpg','jpeg','png','webp']))
+                                <img src="{{ asset('storage/'.$cert['file']) }}" alt="{{ $cert['name'] }}" class="img-fluid rounded mb-3" style="max-height:160px; object-fit:contain;">
+                            @else
+                                <div class="py-3 mb-2"><i class="fas fa-file-pdf fa-4x text-danger opacity-75"></i></div>
+                            @endif
+                            <a href="{{ asset('storage/'.$cert['file']) }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-eye me-1"></i> Lihat Dokumen
+                            </a>
+                        @else
+                            <div class="py-3"><i class="fas fa-certificate fa-4x text-secondary opacity-25"></i></div>
+                            <p class="text-muted small mb-0">Dokumen tidak tersedia</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endif
+            @endforeach
+
+        </div>
+    </div>
+</section>
+@endif
+
+@endsection
