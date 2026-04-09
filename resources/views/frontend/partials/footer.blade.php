@@ -5,10 +5,7 @@
             <div class="col-lg-4 notranslate" translate="no">
                 <div class="d-flex align-items-center gap-3 mb-3">
                     @php 
-                        $logo = \App\Models\Setting::get('site_logo_white');
-                        if (!$logo) {
-                            $logo = \App\Models\Setting::get('site_logo');
-                        }
+                        $logo = \App\Models\Setting::get('site_logo_white') ?? \App\Models\Setting::get('site_logo');
                     @endphp
                     @if($logo)
                         <img src="{{ asset('storage/'.$logo) }}" height="50" alt="Logo" class="notranslate" translate="no">
