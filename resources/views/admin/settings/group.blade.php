@@ -334,7 +334,7 @@
                                             <div class="card h-100 {{ ($settings['site_theme'] ?? 'navy-blue-balakutak') == 'navy-blue-balakutak' ? 'border-primary shadow' : '' }}" style="cursor:pointer; border-width: 2px;" onclick="document.getElementById('theme_navy').checked = true">
                                                 <div class="card-body text-center p-3">
                                                     <div class="rounded mb-2 d-flex align-items-center justify-content-center" style="height:60px; background: linear-gradient(135deg, #0a192f 0%, #112240 100%);">
-                                                        <img src="{{ asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
+                                                        <img src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
                                                     </div>
                                                     <div class="custom-control custom-radio">
                                                         <input class="custom-control-input" type="radio" id="theme_navy" name="site_theme" value="navy-blue-balakutak" {{ ($settings['site_theme'] ?? 'navy-blue-balakutak') == 'navy-blue-balakutak' ? 'checked' : '' }}>
@@ -347,7 +347,7 @@
                                             <div class="card h-100 {{ ($settings['site_theme'] ?? '') == 'green-gold-balakutak' ? 'border-primary shadow' : '' }}" style="cursor:pointer; border-width: 2px;" onclick="document.getElementById('theme_green').checked = true">
                                                 <div class="card-body text-center p-3">
                                                     <div class="rounded mb-2 d-flex align-items-center justify-content-center" style="height:60px; background: linear-gradient(135deg, #064e3b 0%, #d97706 100%);">
-                                                        <img src="{{ asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
+                                                        <img src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
                                                     </div>
                                                     <div class="custom-control custom-radio">
                                                         <input class="custom-control-input" type="radio" id="theme_green" name="site_theme" value="green-gold-balakutak" {{ ($settings['site_theme'] ?? '') == 'green-gold-balakutak' ? 'checked' : '' }}>
@@ -360,7 +360,7 @@
                                             <div class="card h-100 {{ ($settings['site_theme'] ?? '') == 'brown-yellow-balakutak' ? 'border-primary shadow' : '' }}" style="cursor:pointer; border-width: 2px;" onclick="document.getElementById('theme_brown').checked = true">
                                                 <div class="card-body text-center p-3">
                                                     <div class="rounded mb-2 d-flex align-items-center justify-content-center" style="height:60px; background: linear-gradient(135deg, #3E2723 0%, #FFD700 100%);">
-                                                        <img src="{{ asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
+                                                        <img src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
                                                     </div>
                                                     <div class="custom-control custom-radio">
                                                         <input class="custom-control-input" type="radio" id="theme_brown" name="site_theme" value="brown-yellow-balakutak" {{ ($settings['site_theme'] ?? '') == 'brown-yellow-balakutak' ? 'checked' : '' }}>
@@ -373,7 +373,7 @@
                                             <div class="card h-100 {{ ($settings['site_theme'] ?? '') == 'maroon-red-balakutak' ? 'border-primary shadow' : '' }}" style="cursor:pointer; border-width: 2px;" onclick="document.getElementById('theme_maroon_red').checked = true">
                                                 <div class="card-body text-center p-3">
                                                     <div class="rounded mb-2 d-flex align-items-center justify-content-center" style="height:60px; background: linear-gradient(135deg, #4A0000 0%, #FF3131 100%);">
-                                                        <img src="{{ asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
+                                                        <img src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
                                                     </div>
                                                     <div class="custom-control custom-radio">
                                                         <input class="custom-control-input" type="radio" id="theme_maroon_red" name="site_theme" value="maroon-red-balakutak" {{ ($settings['site_theme'] ?? '') == 'maroon-red-balakutak' ? 'checked' : '' }}>
@@ -387,7 +387,7 @@
                                             <div class="card h-100 {{ ($settings['site_theme'] ?? '') == 'black-silver-balakutak' ? 'border-primary shadow' : '' }}" style="cursor:pointer; border-width: 2px;" onclick="document.getElementById('theme_black_silver').checked = true">
                                                 <div class="card-body text-center p-3">
                                                     <div class="rounded mb-2 d-flex align-items-center justify-content-center" style="height:60px; background: linear-gradient(135deg, #212529 0%, #adb5bd 100%);">
-                                                        <img src="{{ asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
+                                                        <img src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
                                                     </div>
                                                     <div class="custom-control custom-radio">
                                                         <input class="custom-control-input" type="radio" id="theme_black_silver" name="site_theme" value="black-silver-balakutak" {{ ($settings['site_theme'] ?? '') == 'black-silver-balakutak' ? 'checked' : '' }}>
@@ -401,7 +401,7 @@
                                             <div class="card h-100 {{ ($settings['site_theme'] ?? '') == 'maroon-brown-balakutak' ? 'border-primary shadow' : '' }}" style="cursor:pointer; border-width: 2px;" onclick="document.getElementById('theme_maroon_brown').checked = true">
                                                 <div class="card-body text-center p-3">
                                                     <div class="rounded mb-2 d-flex align-items-center justify-content-center" style="height:60px; background: linear-gradient(135deg, #692C1C 0%, #8D6E63 100%);">
-                                                        <img src="{{ asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
+                                                        <img src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('images/logo.png') }}" style="max-height: 40px; width: auto;">
                                                     </div>
                                                     <div class="custom-control custom-radio">
                                                         <input class="custom-control-input" type="radio" id="theme_maroon_brown" name="site_theme" value="maroon-brown-balakutak" {{ ($settings['site_theme'] ?? '') == 'maroon-brown-balakutak' ? 'checked' : '' }}>

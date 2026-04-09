@@ -64,6 +64,11 @@ class AppServiceProvider extends ServiceProvider
         // Set AdminLTE Logo dynamically
         try {
             $settings = \App\Models\Setting::pluck('value', 'key')->toArray();
+            // Set Logo Image
+            if (isset($settings['site_logo']) && !empty($settings['site_logo'])) {
+                config(['adminlte.logo_img' => 'storage/' . $settings['site_logo']]);
+            }
+
             if (isset($settings['site_abbreviation']) && !empty($settings['site_abbreviation'])) {
                 config(['adminlte.logo' => '<b>' . $settings['site_abbreviation'] . '</b>']);
             }
