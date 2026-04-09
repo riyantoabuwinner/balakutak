@@ -154,7 +154,11 @@
 
         {{-- Horizontal Exterior Branding Below Card (2cm Gap) --}}
         <div class="mt-[76px] flex flex-row items-center justify-center gap-4 animate-fade-in opacity-40 hover:opacity-100 transition-opacity duration-700">
-            @php $siteLogo = \App\Models\Setting::get('site_logo_white') ?? \App\Models\Setting::get('site_logo'); @endphp
+            @php 
+                $logoWhite = \App\Models\Setting::get('site_logo_white');
+                $logoMain = \App\Models\Setting::get('site_logo');
+                $siteLogo = (!$logoWhite || $logoWhite == 'images/logo_white.png') ? $logoMain : $logoWhite;
+            @endphp
             <img src="{{ $siteLogo ? asset('storage/'.$siteLogo) : asset('images/balakutak-logo-official.png') }}" 
                  alt="Logo" 
                  style="height: 57px !important; width: auto;" 

@@ -163,13 +163,12 @@
     </div>
     <div class="page-header-logo">
         @php 
-            $logo = \App\Models\Setting::get('site_logo_white');
-            if (!$logo) {
-                $logo = \App\Models\Setting::get('site_logo');
-            }
+            $logoWhite = \App\Models\Setting::get('site_logo_white');
+            $logoMain = \App\Models\Setting::get('site_logo');
+            $displayLogo = (!$logoWhite || $logoWhite == 'images/logo_white.png') ? $logoMain : $logoWhite;
         @endphp
-        @if($logo)
-            <img src="{{ asset('storage/'.$logo) }}" alt="Logo">
+        @if($displayLogo)
+            <img src="{{ asset('storage/'.$displayLogo) }}" alt="Logo">
         @endif
     </div>
 </div>

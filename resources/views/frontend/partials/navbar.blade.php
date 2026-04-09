@@ -302,7 +302,8 @@
         <a class="navbar-brand d-flex align-items-center gap-3 notranslate" translate="no" href="{{ route('home') }}">
             @php 
                 $logo = \App\Models\Setting::get('site_logo');
-                $logoWhite = \App\Models\Setting::get('site_logo_white');
+                $logoWhiteRaw = \App\Models\Setting::get('site_logo_white');
+                $logoWhite = (!$logoWhiteRaw || $logoWhiteRaw == 'images/logo_white.png') ? $logo : $logoWhiteRaw;
             @endphp
             @if($logo)
                 <div class="logo-container">

@@ -18,7 +18,12 @@
     <meta property="og:type" content="website">
 
     {{-- Favicon --}}
-    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    @php $favicon = \App\Models\Setting::get('site_favicon'); @endphp
+    @if($favicon)
+        <link rel="icon" href="{{ asset('storage/'.$favicon) }}" type="image/x-icon">
+    @else
+        <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    @endif
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">

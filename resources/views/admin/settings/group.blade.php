@@ -73,6 +73,16 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Logo Website (Versi Putih)</label>
+                                <div class="col-sm-9">
+                                    @if(isset($settings['site_logo_white']))
+                                        <div class="mb-2 bg-dark p-2 d-inline-block rounded"><img src="{{ asset('storage/' . $settings['site_logo_white']) }}" style="max-height: 50px;"></div>
+                                    @endif
+                                    <input type="file" name="site_logo_white" class="form-control-file">
+                                    <small class="text-muted">Gunakan untuk area dengan latar belakang gelap (seperti footer).</small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Favicon</label>
                                 <div class="col-sm-9">
                                     @if(isset($settings['site_favicon']))
@@ -100,7 +110,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Nama Ketua Institusi <span class="text-danger">*</span></label>
                                 <div class="col-sm-9">
-                                    <input type="text" name="greeting_name" class="form-control" value="{{ $settings['greeting_name'] ?? '' }}" placeholder="Dr. Fulan, M.Kom" required>
+                                    <input type="text" name="greeting_name" class="form-control" value="{{ $settings['greeting_name'] ?? '' }}" placeholder="Prof. Fulan bin Fulan, M.Kom." required>
                                 </div>
                             </div>
                             <div class="form-group row">

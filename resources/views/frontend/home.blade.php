@@ -40,10 +40,14 @@
             <div class="page-header-pattern"></div>
             <div class="container py-5 position-relative z-1 text-center" data-aos="zoom-out">
                 {{-- Hero Logo --}}
-                @php $logoWhite = \App\Models\Setting::get('site_logo_white'); @endphp
-                @if($logoWhite)
+                @php 
+                    $logoWhite = \App\Models\Setting::get('site_logo_white');
+                    $logoMain = \App\Models\Setting::get('site_logo');
+                    $displayLogo = (!$logoWhite || $logoWhite == 'images/logo_white.png') ? $logoMain : $logoWhite;
+                @endphp
+                @if($displayLogo)
                     <div class="mb-4" data-aos="fade-down">
-                        <img src="{{ asset('storage/'.$logoWhite) }}" height="100" alt="Logo" class="hero-logo-premium">
+                        <img src="{{ asset('storage/'.$displayLogo) }}" height="100" alt="Logo" class="hero-logo-premium">
                     </div>
                 @endif
 

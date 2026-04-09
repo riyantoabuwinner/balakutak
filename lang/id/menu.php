@@ -42,7 +42,7 @@ return [
     'active_students' => 'Mahasiswa Aktif',
     'alumni' => 'Alumni',
     'leader_greeting' => 'Sambutan Pimpinan',
-    'leader_fallback_name' => 'Ketua Program Studi',
+    'leader_fallback_name' => 'Prof. Fulan bin Fulan, M.Kom.',
     'leader_fallback_text' => 'Selamat datang di website resmi Program Studi kami.',
     'latest' => 'Terbaru',
     'news_and_articles' => 'Berita & Artikel',

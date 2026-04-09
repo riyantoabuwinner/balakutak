@@ -5,7 +5,15 @@
             <div class="col-lg-4 notranslate" translate="no">
                 <div class="d-flex align-items-center gap-3 mb-3">
                     @php 
-                        $logo = \App\Models\Setting::get('site_logo_white') ?? \App\Models\Setting::get('site_logo');
+                        $logoWhite = \App\Models\Setting::get('site_logo_white');
+                        $logoMain = \App\Models\Setting::get('site_logo');
+                        
+                        // Use main logo if white logo is empty OR is still the default seeder path
+                        if (!$logoWhite || $logoWhite == 'images/logo_white.png') {
+                            $logo = $logoMain;
+                        } else {
+                            $logo = $logoWhite;
+                        }
                     @endphp
                     @if($logo)
                         <img src="{{ asset('storage/'.$logo) }}" height="50" alt="Logo" class="notranslate" translate="no">
