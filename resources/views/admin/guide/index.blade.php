@@ -409,12 +409,33 @@
                                         <p class="mb-2"><strong>Kelola User:</strong> Tambah admin baru atau staf prodi.</p>
                                         <p class="mb-3"><strong>Role:</strong> Super Admin (Full), Admin Prodi (Content), Editor (Hanya Tulis).</p>
                                         
-                                        <div class="bg-light p-2 rounded mb-0">
-                                            <p class="font-weight-bold mb-1"><i class="fas fa-key mr-1"></i> Akun Demo (Seeder):</p>
-                                            <table class="table table-sm table-borderless mb-0" style="font-size: 10px;">
-                                                <tr class="border-bottom"><td>SuperAdmin</td><td>superadmin@prodi.ac.id</td></tr>
-                                                <tr class="border-bottom"><td>AdminProdi</td><td>admin@prodi.ac.id</td></tr>
-                                                <tr><td>Password</td><td><span class="badge badge-warning">password</span></td></tr>
+                                        <div class="bg-navy p-3 rounded mb-0 text-white">
+                                            <p class="font-weight-bold mb-2 text-warning"><i class="fas fa-key mr-1"></i> AKUN DEFAULT (SEEDER):</p>
+                                            <table class="table table-sm table-borderless mb-0 text-white" style="font-size: 11px;">
+                                                <tr class="border-bottom border-secondary">
+                                                    <td class="py-1">Super Admin</td>
+                                                    <td class="py-1">superadmin@prodi.ac.id</td>
+                                                </tr>
+                                                <tr class="border-bottom border-secondary">
+                                                    <td class="py-1">Admin Prodi</td>
+                                                    <td class="py-1">admin@prodi.ac.id</td>
+                                                </tr>
+                                                <tr class="border-bottom border-secondary">
+                                                    <td class="py-1">Editor Konten</td>
+                                                    <td class="py-1">editor@prodi.ac.id</td>
+                                                </tr>
+                                                <tr class="border-bottom border-secondary">
+                                                    <td class="py-1">Dosen</td>
+                                                    <td class="py-1">dosen@prodi.ac.id</td>
+                                                </tr>
+                                                <tr class="border-bottom border-secondary">
+                                                    <td class="py-1">Operator</td>
+                                                    <td class="py-1">operator@prodi.ac.id</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="pt-2 font-weight-bold text-warning">PASSWORD</td>
+                                                    <td class="pt-2"><strong>password</strong></td>
+                                                </tr>
                                             </table>
                                         </div>
                                     </div>
