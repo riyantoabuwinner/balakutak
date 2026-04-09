@@ -285,8 +285,8 @@
     <section class="section-testimonials py-5">
         <div class="container">
             <div class="text-center mb-5" data-aos="fade-up">
-                <div class="section-badge text-primary fw-semibold mb-2"><i class="fas fa-quote-left me-2"></i>{{ __('menu.testimonial') }}</div>
-                <h2 class="fw-bold">{{ __('menu.alumni_says') }}</h2>
+                <div class="section-badge text-primary fw-semibold mb-2"><i class="fas fa-comments me-2"></i>{{ __('menu.testimonial') }}</div>
+                <h2 class="fw-bold"><i class="fas fa-user-graduate me-2 text-primary"></i>{{ __('menu.alumni_says') }}</h2>
             </div>
             <div class="swiper testimonial-swiper" data-aos="fade-up">
                 <div class="swiper-wrapper pb-5 justify-content-center">

@@ -63,6 +63,7 @@ return [
     'registration_info' => 'Info Pendaftaran',
     'see_curriculum' => 'Lihat Kurikulum',
     'announcement' => 'Pengumuman',
+    'testimonial' => 'Testimoni',
 
     // Chatbot
     'chatbot_title' => 'Tanya Info Prodi',

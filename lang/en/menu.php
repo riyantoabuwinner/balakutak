@@ -62,6 +62,7 @@ return [
     'registration_info' => 'Registration Info',
     'see_curriculum' => 'View Curriculum',
     'announcement' => 'Announcement',
+    'testimonial' => 'Testimonial',
 
     // Chatbot
     'chatbot_title' => 'Ask Department Info',
