@@ -93,7 +93,7 @@ Akses Admin di: `http://127.0.0.1:8000/admin` (Login Default: `superadmin@prodi.
 ---
 
 ## 📄 Lisensi
-BalaKutaK CMS adalah software open-source yang dilisensikan di bawah [MIT license](https://opensource.org/licenses/MIT).
+BalaKutaK CMS adalah software open-source.
 
 ---
 
