@@ -18,7 +18,7 @@
                     <select name="category" class="form-control form-control-sm">
                         <option value="">Semua Kategori</option>
                         @foreach($categories as $cat)
-                            <option value="{{ $cat }}" {{ request('category')==$cat?'selected':'' }}>{{ ucfirst($cat) }}</option>
+                            <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -74,7 +74,7 @@
                             <span class="text-xs text-muted" title="{{ $doc->file_name }}">{{ \Illuminate\Support\Str::limit($doc->file_name, 40) }}</span>
                         </td>
                         <td class="align-middle">
-                            <span class="badge badge-light border">{{ ucfirst($doc->category) }}</span>
+                            <span class="badge badge-light border">{{ $doc->category?->name ?? 'Tanpa Kategori' }}</span>
                         </td>
                         <td class="align-middle text-sm text-muted">
                             {{ number_format($doc->file_size / 1024 / 1024, 2) }} MB

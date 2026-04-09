@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Document;
+use App\Models\DocumentCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -12,20 +13,21 @@ class DocumentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Document::with('user')
+        $query = Document::with(['user', 'category'])
             ->when($request->search, fn($q) => $q->where('title', 'like', "%{$request->search}%"))
-            ->when($request->category, fn($q) => $q->where('category', $request->category));
+            ->when($request->category, fn($q) => $q->where('document_category_id', $request->category));
 
         $documents = $query->latest()->paginate(15)->withQueryString();
 
-        $categories = Document::select('category')->distinct()->pluck('category');
+        $categories = DocumentCategory::orderBy('name')->get();
 
         return view('admin.documents.index', compact('documents', 'categories'));
     }
 
     public function create()
     {
-        return view('admin.documents.create');
+        $categories = DocumentCategory::orderBy('name')->get();
+        return view('admin.documents.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -33,7 +35,7 @@ class DocumentController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|string|max:50',
+            'document_category_id' => 'required|exists:document_categories,id',
             'file' => 'required|file|max:20480', // max 20MB
             'language' => 'nullable|in:id,en',
             'is_public' => 'boolean',
@@ -45,7 +47,7 @@ class DocumentController extends Controller
         $document->user_id = Auth::id();
         $document->title = $validated['title'];
         $document->description = $validated['description'];
-        $document->category = strtolower($validated['category']);
+        $document->document_category_id = $validated['document_category_id'];
         $document->language = $validated['language'] ?? app()->getLocale();
         $document->is_public = $request->boolean('is_public', true);
 
@@ -62,7 +64,8 @@ class DocumentController extends Controller
 
     public function edit(Document $document)
     {
-        return view('admin.documents.edit', compact('document'));
+        $categories = DocumentCategory::orderBy('name')->get();
+        return view('admin.documents.edit', compact('document', 'categories'));
     }
 
     public function update(Request $request, Document $document)
@@ -70,7 +73,7 @@ class DocumentController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|string|max:50',
+            'document_category_id' => 'required|exists:document_categories,id',
             'file' => 'nullable|file|max:20480',
             'language' => 'nullable|in:id,en',
             'is_public' => 'boolean',
@@ -78,7 +81,7 @@ class DocumentController extends Controller
 
         $document->title = $validated['title'];
         $document->description = $validated['description'];
-        $document->category = strtolower($validated['category']);
+        $document->document_category_id = $validated['document_category_id'];
         $document->language = $validated['language'] ?? $document->language;
         $document->is_public = $request->boolean('is_public', true);
 
@@ -108,5 +111,27 @@ class DocumentController extends Controller
         $document->delete();
 
         return back()->with('success', 'Dokumen berhasil dihapus!');
+    }
+
+    public function download(Document $document)
+    {
+        if (!$document->file_path || !Storage::disk('public')->exists($document->file_path)) {
+            abort(404);
+        }
+
+        $document->increment('download_count');
+        return Storage::disk('public')->download($document->file_path, $document->file_name);
+    }
+
+    public function publicDownload($id)
+    {
+        $document = Document::where('is_public', true)->findOrFail($id);
+        
+        if (!$document->file_path || !Storage::disk('public')->exists($document->file_path)) {
+            abort(404);
+        }
+
+        $document->increment('download_count');
+        return Storage::disk('public')->download($document->file_path, $document->file_name);
     }
 }

@@ -28,8 +28,13 @@
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <label>Kategori Dokumen <span class="text-danger">*</span></label>
-                                <input type="text" name="category" class="form-control @error('category') is-invalid @enderror" value="{{ old('category', $document->category) }}" required>
-                                @error('category')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                                <select name="document_category_id" class="form-control select2 @error('document_category_id') is-invalid @enderror" required>
+                                    <option value="">-- Pilih Kategori --</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" {{ old('document_category_id', $document->document_category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('document_category_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Status Visibilitas</label>

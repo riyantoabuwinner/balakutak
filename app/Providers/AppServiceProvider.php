@@ -51,10 +51,12 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(BuildingMenu::class , function (BuildingMenu $event) {
             if (app('impersonate')->isImpersonating()) {
                 $event->menu->add([
-                    'text' => ' <strong class="text-danger">BERHENTI IMPERSONATE</strong>',
+                    'text' => 'BACK TO ADMIN',
                     'url' => route('admin.impersonate.leave'),
-                    'icon' => 'fas fa-user-secret text-danger',
+                    'icon' => 'fas fa-user-secret',
+                    'icon_color' => 'white',
                     'topnav_right' => true,
+                    'classes' => 'bg-danger text-white px-3 mr-3 rounded-pill shadow-sm font-weight-bold d-flex align-items-center',
                 ]);
             }
         });

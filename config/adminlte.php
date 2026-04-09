@@ -142,6 +142,7 @@ return [
                 ['text' => 'Sponsor', 'url' => 'admin/sponsors', 'icon' => 'fas fa-hand-holding-heart'],
             ],
         ],
+        ['text' => 'Panduan Sistem', 'url' => 'admin/guide', 'icon' => 'fas fa-book-open', 'active' => ['admin/guide*']],
     ],
 
     'plugins' => [

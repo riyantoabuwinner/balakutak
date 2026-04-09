@@ -72,7 +72,8 @@ class MenuController extends Controller
             ['title' => 'Dosen & SDM', 'url' => '/dosen'],
             ['title' => 'Berita / Artikel', 'url' => '/berita'],
             ['title' => 'Agenda / Event', 'url' => '/agenda'],
-            ['title' => 'Galeri Foto', 'url' => '/galeri'],
+            ['title' => 'Galleri Foto', 'url' => '/galeri'],
+            ['title' => 'Arsip Dokumen', 'url' => '/dokumen'],
             ['title' => 'Kontak', 'url' => '/kontak'],
         ];
 

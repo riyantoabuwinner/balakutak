@@ -8,6 +8,7 @@ use App\Http\Controllers\Frontend\EventController as FrontEventController;
 use App\Http\Controllers\Frontend\GalleryController as FrontGalleryController;
 use App\Http\Controllers\Frontend\PageController as FrontFrontPageController;
 use App\Http\Controllers\Frontend\FrontPageController as FrontInfoPageController;
+use App\Http\Controllers\Frontend\DocumentController as FrontDocumentController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PostController;
@@ -157,6 +158,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', \App\Htt
         }
         )->name('language.switch');
 
+        // System Guide
+        Route::get('guide', function () {
+            return view('admin.guide.index');
+        })->name('guide');
+
         // Impersonate Routes
         Route::impersonate();
     });
@@ -191,7 +197,8 @@ Route::group([
     // Announcements
     Route::get('/pengumuman/{slug}', [HomeController::class , 'showAnnouncement'])->name('announcements.show');
 
-    // Document download
+    // Documents
+    Route::get('/dokumen', [FrontDocumentController::class, 'index'])->name('documents');
     Route::get('/dokumen/{id}/download', [DocumentController::class , 'publicDownload'])->name('documents.public-download');
 
     // Captcha Route
