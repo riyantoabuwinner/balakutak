@@ -18,6 +18,9 @@ class SettingController extends Controller
 
     public function group(string $group)
     {
+        if ($group == 'sponsor') return redirect()->route('admin.sponsors.index');
+        if ($group == 'infographics') return redirect()->route('admin.infographics.index');
+        
         $settings = Setting::where('group', $group)->pluck('value', 'key');
         return view('admin.settings.group', compact('settings', 'group'));
     }
