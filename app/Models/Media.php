@@ -16,6 +16,18 @@ class Media extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Auto-convert relative URL to absolute URL.
+     * Backward compatible dengan data lama yang sudah berisi URL absolut.
+     */
+    public function getUrlAttribute($value): string
+    {
+        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+            return $value;
+        }
+        return asset($value);
+    }
+
     public function getSizeFormattedAttribute(): string
     {
         if ($this->size < 1024)

@@ -22,8 +22,14 @@ class MediaController extends Controller
     {
         $query = Media::with('user')
             ->when($request->folder, fn($q) => $q->where('folder', $request->folder))
-            ->when($request->search, fn($q) => $q->where('original_name', 'like', "%{$request->search}%"))
-            ->when($request->type, fn($q) => $q->where('mime_type', 'like', $request->type . '%'))
+            ->when($request->search, function ($q) use ($request) {
+                $search = str_replace(['%', '_'], ['\%', '\_'], $request->search);
+                $q->where('original_name', 'like', "%{$search}%");
+            })
+            ->when($request->type, function ($q) use ($request) {
+                $type = str_replace(['%', '_'], ['\%', '\_'], $request->type);
+                $q->where('mime_type', 'like', $type . '%');
+            })
             ->latest();
 
         $media = $query->paginate(24)->withQueryString();
@@ -43,12 +49,16 @@ class MediaController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'files.*' => 'nullable|file|max:10240',
-            'file' => 'nullable|file|max:10240',
-            'folder' => 'nullable|string|max:100',
+            'files.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,ppt,pptx,mp4,mp3,zip',
+            'file' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,ppt,pptx,mp4,mp3,zip',
+            'folder' => 'nullable|string|max:100|regex:/^[a-zA-Z0-9\-_\/\s]*$/',
         ]);
 
         $folder = $request->input('folder', '/');
+        // Sanitasi: hapus path traversal sequences
+        $folder = str_replace(['..', "\0"], '', $folder);
+        $folder = trim($folder, '/');
+        $folder = $folder ?: '/';
         $uploaded = [];
         $urls = [];
 
@@ -62,7 +72,21 @@ class MediaController extends Controller
         }
 
         foreach ($files as $file) {
-            $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+            // Validasi MIME type server-side (defense in depth)
+            $allowedMimes = [
+                'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+                'application/pdf',
+                'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'video/mp4', 'audio/mpeg', 'application/zip',
+            ];
+            if (!in_array($file->getMimeType(), $allowedMimes)) {
+                continue;
+            }
+
+            $extension = $file->guessExtension() ?? $file->getClientOriginalExtension();
+            $filename = uniqid() . '_' . time() . '.' . $extension;
             $mediaFolder = ltrim($folder, '/');
             $storePath = 'media' . ($mediaFolder ? '/' . $mediaFolder : '');
             $path = "{$storePath}/{$filename}";
@@ -97,10 +121,10 @@ class MediaController extends Controller
                 'filename' => $filename,
                 'original_name' => $file->getClientOriginalName(),
                 'path' => $path,
-                'url' => asset("storage/{$path}"),
+                'url' => "storage/{$path}",
                 'folder' => $folder,
                 'mime_type' => $file->getMimeType(),
-                'extension' => $file->getClientOriginalExtension(),
+                'extension' => $extension,
                 'size' => $size,
                 'width' => $width,
                 'height' => $height,
@@ -160,7 +184,7 @@ class MediaController extends Controller
             if (request()->expectsJson()) {
                 return response()->json([
                     'success' => false, 
-                    'message' => 'Gagal menghapus media: ' . $e->getMessage()
+                    'message' => 'Gagal menghapus media. Silakan coba lagi.'
                 ], 500);
             }
             return back()->with('error', 'Gagal menghapus media.');
@@ -180,11 +204,13 @@ class MediaController extends Controller
         $query = Media::query()->latest();
         
         if ($request->search) {
-            $query->where('original_name', 'like', "%{$request->search}%");
+            $search = str_replace(['%', '_'], ['\%', '\_'], $request->search);
+            $query->where('original_name', 'like', "%{$search}%");
         }
         
         if ($request->type) {
-            $query->where('mime_type', 'like', $request->type . '%');
+            $type = str_replace(['%', '_'], ['\%', '\_'], $request->type);
+            $query->where('mime_type', 'like', $type . '%');
         }
 
         $media = $query->paginate(18);
@@ -218,21 +244,32 @@ class MediaController extends Controller
 
     public function jsonByPath(Request $request)
     {
-        $path = $request->path; // path from gallery->file_path or similar
+        $path = $request->input('path');
         if (!$path) return response()->json(['error' => 'No path provided'], 400);
 
         // Sanitize path: remove starting 'storage/' or '/' if exists
         $cleanPath = preg_replace('/^(\/?storage\/|\/)/', '', $path);
+        // Hapus path traversal sequences
+        $cleanPath = str_replace(['../', '..\\', '..', "\0"], '', $cleanPath);
 
-        // Try to find in Media table using the clean path
-        $item = Media::where('path', 'like', "%{$cleanPath}%")->first();
+        // Validasi: pastikan resolved path tetap di dalam direktori storage
+        $basePath = realpath(storage_path('app/public'));
+        $resolvedPath = realpath(storage_path('app/public/' . $cleanPath));
+
+        if (!$basePath || ($resolvedPath && !str_starts_with($resolvedPath, $basePath))) {
+            return response()->json(['error' => 'Invalid path'], 403);
+        }
+
+        // Escape LIKE wildcards sebelum query
+        $escapedPath = str_replace(['%', '_'], ['\%', '\_'], $cleanPath);
+        $item = Media::where('path', 'like', "%{$escapedPath}%")->first();
         
         if ($item) {
             return $this->json($item->id);
         }
 
         // Fallback: Get real info from filesystem (storage/app/public/...)
-        $fullPath = storage_path('app/public/' . $cleanPath);
+        $fullPath = $resolvedPath ?: storage_path('app/public/' . $cleanPath);
         $exists = file_exists($fullPath);
         
         $size = '-';
@@ -255,14 +292,14 @@ class MediaController extends Controller
         }
 
         return response()->json([
-            'id' => $item ? $item->id : null,
-            'filename' => $item ? $item->original_name : basename($cleanPath),
-            'url' => $item ? $item->url : asset('storage/' . $cleanPath),
-            'path' => $item ? $item->path : $cleanPath,
-            'size' => $item ? $item->size_formatted : $size,
-            'dimensions' => $item ? ($item->width . ' x ' . $item->height) : $dimensions,
-            'mime' => $item ? $item->mime_type : $mime,
-            'delete_url' => $item ? route('admin.media.destroy', $item->id) : null,
+            'id' => null,
+            'filename' => basename($cleanPath),
+            'url' => asset('storage/' . $cleanPath),
+            'path' => $cleanPath,
+            'size' => $size,
+            'dimensions' => $dimensions,
+            'mime' => $mime,
+            'delete_url' => null,
         ]);
     }
 }
