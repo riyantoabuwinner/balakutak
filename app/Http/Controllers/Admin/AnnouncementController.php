@@ -39,7 +39,7 @@ class AnnouncementController extends Controller
             'priority' => 'required|in:low,normal,high,urgent',
             'is_published' => 'boolean',
             'expire_date' => 'nullable|date',
-            'attachment' => 'nullable|file|max:10240', // 10MB max
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,webp,zip|max:10240', // 10MB max
         ]);
 
         $announcement = new Announcement($validated);
@@ -59,18 +59,26 @@ class AnnouncementController extends Controller
 
     public function edit(Announcement $announcement)
     {
+        if (!auth()->user()->hasRole(['Super Admin', 'Admin Prodi']) && $announcement->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin mengubah pengumuman ini.');
+        }
+
         return view('admin.announcements.edit', compact('announcement'));
     }
 
     public function update(Request $request, Announcement $announcement)
     {
+        if (!auth()->user()->hasRole(['Super Admin', 'Admin Prodi']) && $announcement->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin mengubah pengumuman ini.');
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'priority' => 'required|in:low,normal,high,urgent',
             'is_published' => 'boolean',
             'expire_date' => 'nullable|date',
-            'attachment' => 'nullable|file|max:10240',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,webp,zip|max:10240',
         ]);
 
         if ($request->hasFile('attachment')) {
@@ -93,6 +101,10 @@ class AnnouncementController extends Controller
 
     public function destroy(Announcement $announcement)
     {
+        if (!auth()->user()->hasRole(['Super Admin', 'Admin Prodi']) && $announcement->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin menghapus pengumuman ini.');
+        }
+
         if ($announcement->attachment) {
             Storage::disk('public')->delete($announcement->attachment);
         }

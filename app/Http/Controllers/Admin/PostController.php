@@ -87,7 +87,7 @@ class PostController extends Controller
             'is_featured' => 'boolean',
             'allow_comments' => 'boolean',
             'featured_image' => 'nullable|string',
-            'featured_image_file' => 'nullable|image|max:4096',
+            'featured_image_file' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:4096',
             'published_at' => 'nullable|date',
             'seo_title' => 'nullable|string|max:60',
             'seo_description' => 'nullable|string|max:160',
@@ -162,7 +162,7 @@ class PostController extends Controller
         $file = $request->file('xml_file');
 
         libxml_use_internal_errors(true);
-        $xml = simplexml_load_file($file->getRealPath());
+        $xml = simplexml_load_file($file->getRealPath(), 'SimpleXMLElement', LIBXML_NONET);
 
         if (!$xml) {
             return back()->withErrors(['xml_file' => 'Format file XML tidak valid atau rusak.']);
@@ -269,6 +269,7 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
+        $this->authorizePostAccess($post);
         $categories = Category::orderBy('name')->get();
         $tags = Tag::orderBy('name')->get();
         $selectedTags = $post->tags->pluck('id')->toArray();
@@ -277,6 +278,7 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
+        $this->authorizePostAccess($post);
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
@@ -289,7 +291,7 @@ class PostController extends Controller
             'is_featured' => 'boolean',
             'allow_comments' => 'boolean',
             'featured_image' => 'nullable|string',
-            'featured_image_file' => 'nullable|image|max:4096',
+            'featured_image_file' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:4096',
             'published_at' => 'nullable|date',
             'seo_title' => 'nullable|string|max:60',
             'seo_description' => 'nullable|string|max:160',
@@ -350,6 +352,7 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
+        $this->authorizePostAccess($post);
         $post->delete();
         return back()->with('success', 'Artikel berhasil dihapus!');
     }
@@ -372,16 +375,25 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        $this->authorizePostAccess($post);
         return view('admin.posts.show', compact('post'));
     }
 
     public function toggleStatus(Post $post)
     {
+        $this->authorizePostAccess($post);
         $post->update([
             'status' => $post->status === 'published' ? 'draft' : 'published',
             'published_at' => $post->status !== 'published' ? now() : null,
         ]);
         return back()->with('success', 'Status artikel diperbarui!');
+    }
+
+    private function authorizePostAccess(Post $post): void
+    {
+        if (!auth()->user()->hasRole(['Super Admin', 'Admin Prodi']) && $post->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin mengakses artikel ini.');
+        }
     }
 
 
@@ -409,22 +421,60 @@ class PostController extends Controller
     private function downloadAndStoreImage($url)
     {
         try {
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
             if (str_starts_with($url, 'data:image/')) {
-                $parts = explode(";base64,", $url);
+                $parts = explode(";base64,", $url, 2);
                 if (count($parts) === 2) {
-                    $image_type_aux = explode("data:image/", $parts[0]);
-                    $image_type = $image_type_aux[1] ?? 'png';
-                    $image_base64 = base64_decode($parts[1]);
-                    $path = 'gallery/imported-' . Str::random(20) . '.' . $image_type;
-                    Storage::disk('public')->put($path, $image_base64);
+                    $imageTypeAux = explode("data:image/", $parts[0], 2);
+                    $ext = strtolower($imageTypeAux[1] ?? '');
+                    if (!in_array($ext, $allowedExtensions, true)) {
+                        return null;
+                    }
+                    $imageBytes = base64_decode($parts[1], true);
+                    if ($imageBytes === false || @getimagesizefromstring($imageBytes) === false) {
+                        return null;
+                    }
+                    $path = 'gallery/imported-' . Str::random(20) . '.' . $ext;
+                    Storage::disk('public')->put($path, $imageBytes);
                     return $path;
                 }
             } else {
-                $response = \Illuminate\Support\Facades\Http::timeout(20)->get($url);
-                if ($response->successful() && str_contains($response->header('Content-Type'), 'image/')) {
-                    $ext = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
-                    $path = 'gallery/imported-' . Str::random(20) . '.' . $ext;
-                    Storage::disk('public')->put($path, $response->body());
+                // SSRF protection: allow only public http/https URLs
+                $parsed = parse_url($url);
+                $scheme = strtolower($parsed['scheme'] ?? '');
+                $host = $parsed['host'] ?? '';
+                if (!in_array($scheme, ['http', 'https'], true) || empty($host)) {
+                    return null;
+                }
+                $ip = gethostbyname($host);
+                if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return null;
+                }
+
+                $response = \Illuminate\Support\Facades\Http::timeout(15)->get($url);
+                $contentType = strtolower((string) $response->header('Content-Type'));
+                $mimeMap = [
+                    'image/jpeg' => 'jpg',
+                    'image/jpg'  => 'jpg',
+                    'image/png'  => 'png',
+                    'image/gif'  => 'gif',
+                    'image/webp' => 'webp',
+                ];
+                $matchedExt = null;
+                foreach ($mimeMap as $mime => $ext) {
+                    if (str_contains($contentType, $mime)) {
+                        $matchedExt = $ext;
+                        break;
+                    }
+                }
+                if ($response->successful() && $matchedExt !== null) {
+                    $body = $response->body();
+                    if (@getimagesizefromstring($body) === false) {
+                        return null;
+                    }
+                    $path = 'gallery/imported-' . Str::random(20) . '.' . $matchedExt;
+                    Storage::disk('public')->put($path, $body);
                     return $path;
                 }
             }

@@ -29,7 +29,7 @@ class PartnerController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'logo' => 'required|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
+            'logo' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             'website_url' => 'nullable|url|max:255',
             'description' => 'nullable|string',
             'order' => 'nullable|integer|min:0',
@@ -66,7 +66,7 @@ class PartnerController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'website_url' => 'nullable|url|max:255',
             'description' => 'nullable|string',
             'order' => 'nullable|integer|min:0',

@@ -118,6 +118,11 @@ class BackupController extends Controller
 
     public function download(string $filename)
     {
+        $filename = basename($filename);
+        if (!preg_match('/^[a-zA-Z0-9._-]+\.zip$/', $filename)) {
+            abort(400, 'Nama file backup tidak valid.');
+        }
+
         $path = $this->backupDir . '/' . $filename;
 
         if (!Storage::disk($this->disk)->exists($path)) {
@@ -130,6 +135,11 @@ class BackupController extends Controller
 
     public function destroy(string $filename)
     {
+        $filename = basename($filename);
+        if (!preg_match('/^[a-zA-Z0-9._-]+\.zip$/', $filename)) {
+            abort(400, 'Nama file backup tidak valid.');
+        }
+
         $path = $this->backupDir . '/' . $filename;
 
         if (!Storage::disk($this->disk)->exists($path)) {

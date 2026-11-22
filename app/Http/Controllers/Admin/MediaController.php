@@ -49,8 +49,8 @@ class MediaController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'files.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,ppt,pptx,mp4,mp3,zip',
-            'file' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,ppt,pptx,mp4,mp3,zip',
+            'files.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,ppt,pptx,mp4,mp3,zip',
+            'file' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,ppt,pptx,mp4,mp3,zip',
             'folder' => 'nullable|string|max:100|regex:/^[a-zA-Z0-9\-_\/\s]*$/',
         ]);
 
@@ -72,9 +72,9 @@ class MediaController extends Controller
         }
 
         foreach ($files as $file) {
-            // Validasi MIME type server-side (defense in depth)
+            // Validasi MIME type server-side (defense in depth - SVG blocked to prevent Stored XSS)
             $allowedMimes = [
-                'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+                'image/jpeg', 'image/png', 'image/gif', 'image/webp',
                 'application/pdf',
                 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -157,6 +157,10 @@ class MediaController extends Controller
     }
     public function destroy(Media $media)
     {
+        if (!auth()->user()->hasRole(['Super Admin', 'Admin Prodi']) && $media->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin menghapus media ini.');
+        }
+
         try {
             $filePath = $media->path;
             

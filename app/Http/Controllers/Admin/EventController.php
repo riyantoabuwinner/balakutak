@@ -59,7 +59,7 @@ class EventController extends Controller
                 'organizer' => 'nullable|string|max:255',
                 'contact_person' => 'nullable|string|max:255',
                 'registration_url' => 'nullable|url|max:255',
-                'featured_image_file' => 'nullable|image|max:10240', // Increased to 10MB to test limits
+                'featured_image_file' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:10240', // Increased to 10MB to test limits
                 'is_published' => 'boolean',
                 'seo_title' => 'nullable|string|max:60',
                 'seo_description' => 'nullable|string|max:160',
@@ -114,11 +114,17 @@ class EventController extends Controller
 
     public function edit(Event $event)
     {
+        if (!auth()->user()->hasRole(['Super Admin', 'Admin Prodi']) && $event->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin mengubah agenda ini.');
+        }
         return view('admin.events.edit', compact('event'));
     }
 
     public function update(Request $request, Event $event)
     {
+        if (!auth()->user()->hasRole(['Super Admin', 'Admin Prodi']) && $event->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin mengubah agenda ini.');
+        }
         Log::info('Event Update Request Started: ID ' . $event->id, [
             'request_data' => $request->except(['featured_image', '_token']),
             'has_file' => $request->hasFile('featured_image')
@@ -141,7 +147,7 @@ class EventController extends Controller
                 'organizer' => 'nullable|string|max:255',
                 'contact_person' => 'nullable|string|max:255',
                 'registration_url' => 'nullable|url|max:255',
-                'featured_image_file' => 'nullable|image|max:10240',
+                'featured_image_file' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:10240',
                 'is_published' => 'boolean',
                 'seo_title' => 'nullable|string|max:60',
                 'seo_description' => 'nullable|string|max:160',
@@ -192,6 +198,9 @@ class EventController extends Controller
 
     public function destroy(Event $event)
     {
+        if (!auth()->user()->hasRole(['Super Admin', 'Admin Prodi']) && $event->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki izin menghapus agenda ini.');
+        }
         if ($event->featured_image) {
             Storage::disk('public')->delete($event->featured_image);
         }

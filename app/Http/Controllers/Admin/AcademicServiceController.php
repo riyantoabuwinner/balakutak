@@ -25,7 +25,7 @@ class AcademicServiceController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'icon' => 'nullable|string|max:255',
-            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:1024',
+            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:1024',
             'description' => 'nullable|string',
             'url' => 'nullable|string|max:500',
             'is_external' => 'boolean',
@@ -58,7 +58,7 @@ class AcademicServiceController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'icon' => 'nullable|string|max:255',
-            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:1024',
+            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:1024',
             'description' => 'nullable|string',
             'url' => 'nullable|string|max:500',
             'is_external' => 'boolean',

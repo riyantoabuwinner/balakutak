@@ -52,7 +52,7 @@ class ResearchServiceController extends Controller
         ]);
 
         if ($request->hasFile('file_path')) {
-            $request->validate(['file_path' => 'file|max:30720']);
+            $request->validate(['file_path' => 'file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,jpg,jpeg,png,webp|max:30720']);
             $validated['file_path'] = $request->file('file_path')->store('research_files', 'public');
         }
 
@@ -93,7 +93,7 @@ class ResearchServiceController extends Controller
         ]);
 
         if ($request->hasFile('file_path')) {
-            $request->validate(['file_path' => 'file|max:30720']);
+            $request->validate(['file_path' => 'file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,jpg,jpeg,png,webp|max:30720']);
             if ($researchService->file_path) {
                 Storage::disk('public')->delete($researchService->file_path);
             }

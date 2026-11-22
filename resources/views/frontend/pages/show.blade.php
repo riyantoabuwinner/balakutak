@@ -63,7 +63,7 @@
 
 @push('styles')
 <style>
-    {!! $builderCss !!}
+    {!! str_ireplace('</style', '', $builderCss ?? '') !!}
     .leading-relaxed { line-height: 1.8; }
     .page-content { font-size: 1.15rem; }
     .page-content p { margin-bottom: 1.5rem; }

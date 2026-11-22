@@ -51,8 +51,9 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'status' => 'required|in:active,inactive',
-            'avatar' => 'nullable|image|max:2048',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
             'roles' => 'nullable|array',
+            'roles.*' => 'string|exists:roles,name',
         ]);
 
         $data = $request->except(['password', 'password_confirmation', 'avatar', 'roles']);
@@ -93,8 +94,9 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
             'status' => 'required|in:active,inactive',
-            'avatar' => 'nullable|image|max:2048',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
             'roles' => 'nullable|array',
+            'roles.*' => 'string|exists:roles,name',
         ]);
 
         $data = $request->except(['password', 'password_confirmation', 'avatar', 'roles']);

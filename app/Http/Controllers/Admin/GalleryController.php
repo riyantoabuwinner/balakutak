@@ -49,7 +49,7 @@ class GalleryController extends Controller
         $gallery->is_active = $request->boolean('is_active', true);
 
         if ($request->type === 'photo') {
-            $request->validate(['file_path' => 'required|image|max:10240']);
+            $request->validate(['file_path' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:10240']);
             $file = $request->file('file_path');
             $gallery->file_path = $file->store('gallery', 'public');
             
@@ -103,7 +103,7 @@ class GalleryController extends Controller
 
         if ($request->type === 'photo') {
             if ($request->hasFile('file_path')) {
-                $request->validate(['file_path' => 'image|max:10240']);
+                $request->validate(['file_path' => 'image|mimes:jpg,jpeg,png,gif,webp|max:10240']);
                 if ($gallery->file_path) {
                     Storage::disk('public')->delete($gallery->file_path);
                     Media::where('path', $gallery->file_path)->delete();

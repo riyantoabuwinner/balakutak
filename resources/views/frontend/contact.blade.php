@@ -140,7 +140,7 @@
                     <style>
                         iframe { width: 100% !important; height: 100% !important; min-height: 400px; border: 0; }
                     </style>
-                    {!! $map !!}
+                    @safeHtml($map)
                 </div>
             </div>
         </div>

@@ -41,115 +41,127 @@ use App\Http\Controllers\Admin\FaqController;
 /* |-------------------------------------------------------------------------- | Admin Panel Routes (Protected) |-------------------------------------------------------------------------- */
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', \App\Http\Middleware\AdminLocale::class])->group(function () {
 
-    Route::get('/', [DashboardController::class , 'index'])->name('dashboard');
-    Route::get('/stats', [DashboardController::class , 'stats'])->name('stats');
+    Route::get('/', [DashboardController::class , 'index'])->middleware('permission:view dashboard')->name('dashboard');
+    Route::get('/stats', [DashboardController::class , 'stats'])->middleware('permission:view dashboard')->name('stats');
 
     // Posts / Articles
-    Route::post('posts/import', [PostController::class , 'import'])->name('posts.import');
-    Route::delete('posts/mass-destroy', [PostController::class , 'massDestroy'])->name('posts.mass-destroy');
-    Route::resource('posts', PostController::class);
-    Route::patch('posts/{post}/toggle-status', [PostController::class , 'toggleStatus'])->name('posts.toggle-status');
+    Route::middleware(['permission:view posts'])->group(function () {
+        Route::post('posts/import', [PostController::class , 'import'])->middleware('permission:create posts')->name('posts.import');
+        Route::delete('posts/mass-destroy', [PostController::class , 'massDestroy'])->middleware('permission:delete posts')->name('posts.mass-destroy');
+        Route::resource('posts', PostController::class);
+        Route::patch('posts/{post}/toggle-status', [PostController::class , 'toggleStatus'])->middleware('permission:publish posts')->name('posts.toggle-status');
+    });
 
-    // Pages
-    Route::get('builder-pages', [PageController::class , 'builderIndex'])->name('pages.builder-index');
-    Route::get('pages/{page}/builder', [PageController::class , 'builder'])->name('pages.builder');
-    Route::post('pages/{page}/builder', [PageController::class , 'saveBuilder'])->name('pages.save-builder');
-    Route::resource('pages', PageController::class);
+    // Pages & FAQs
+    Route::middleware(['permission:view pages'])->group(function () {
+        Route::get('builder-pages', [PageController::class , 'builderIndex'])->name('pages.builder-index');
+        Route::get('pages/{page}/builder', [PageController::class , 'builder'])->middleware('permission:edit pages')->name('pages.builder');
+        Route::post('pages/{page}/builder', [PageController::class , 'saveBuilder'])->middleware('permission:edit pages')->name('pages.save-builder');
+        Route::resource('pages', PageController::class);
+        Route::resource('faqs', FaqController::class);
+    });
 
     // Categories & Tags
-    Route::resource('categories', CategoryController::class);
-    Route::resource('tags', TagController::class);
+    Route::resource('categories', CategoryController::class)->middleware('permission:view categories');
+    Route::resource('tags', TagController::class)->middleware('permission:view tags');
 
     // Announcements
-    Route::resource('announcements', AnnouncementController::class);
+    Route::resource('announcements', AnnouncementController::class)->middleware('permission:view announcements');
 
-    // Events & Agenda
-    Route::resource('events', EventController::class);
+    // Events & Agenda, Academic Calendar, Academic Services, Research Services
+    Route::middleware(['permission:view events'])->group(function () {
+        Route::resource('events', EventController::class);
+        Route::resource('academic-calendars', AcademicCalendarController::class);
+        Route::resource('academic-services', AcademicServiceController::class);
+        Route::post('research-services/import', [ResearchServiceController::class , 'import'])->name('research-services.import');
+        Route::get('research-services/template', [ResearchServiceController::class , 'downloadTemplate'])->name('research-services.template');
+        Route::get('research-services/export', [ResearchServiceController::class , 'export'])->name('research-services.export');
+        Route::resource('research-services', ResearchServiceController::class);
+    });
 
     // Lecturers
-    Route::post('lecturers/import', [LecturerController::class , 'import'])->name('lecturers.import');
-    Route::get('lecturers/template', [LecturerController::class , 'downloadTemplate'])->name('lecturers.template');
-    Route::get('lecturers/export', [LecturerController::class , 'export'])->name('lecturers.export');
-    Route::resource('lecturers', LecturerController::class);
+    Route::middleware(['permission:view lecturers'])->group(function () {
+        Route::post('lecturers/import', [LecturerController::class , 'import'])->name('lecturers.import');
+        Route::get('lecturers/template', [LecturerController::class , 'downloadTemplate'])->name('lecturers.template');
+        Route::get('lecturers/export', [LecturerController::class , 'export'])->name('lecturers.export');
+        Route::resource('lecturers', LecturerController::class);
+    });
 
     // Curriculum
-    Route::post('curriculums/import', [CurriculumController::class , 'import'])->name('curriculums.import');
-    Route::get('curriculums/template', [CurriculumController::class , 'downloadTemplate'])->name('curriculums.template');
-    Route::get('curriculums/export', [CurriculumController::class , 'export'])->name('curriculums.export');
-    Route::resource('curriculums', CurriculumController::class);
-
-    // Academic Calendar
-    Route::resource('academic-calendars', AcademicCalendarController::class);
-
-    // Academic Services
-    Route::resource('academic-services', AcademicServiceController::class);
-
-    // Research & Community Services
-    Route::post('research-services/import', [ResearchServiceController::class , 'import'])->name('research-services.import');
-    Route::get('research-services/template', [ResearchServiceController::class , 'downloadTemplate'])->name('research-services.template');
-    Route::get('research-services/export', [ResearchServiceController::class , 'export'])->name('research-services.export');
-    Route::resource('research-services', ResearchServiceController::class);
+    Route::middleware(['permission:view curriculum'])->group(function () {
+        Route::post('curriculums/import', [CurriculumController::class , 'import'])->name('curriculums.import');
+        Route::get('curriculums/template', [CurriculumController::class , 'downloadTemplate'])->name('curriculums.template');
+        Route::get('curriculums/export', [CurriculumController::class , 'export'])->name('curriculums.export');
+        Route::resource('curriculums', CurriculumController::class);
+    });
 
     // Documents
-    Route::resource('documents', DocumentController::class);
-    Route::get('documents/{document}/download', [DocumentController::class , 'download'])->name('documents.download');
-
-    // FAQs
-    Route::resource('faqs', FaqController::class);
+    Route::middleware(['permission:view documents'])->group(function () {
+        Route::resource('documents', DocumentController::class);
+        Route::get('documents/{document}/download', [DocumentController::class , 'download'])->name('documents.download');
+    });
 
     // Gallery
-    Route::delete('gallery/mass-destroy', [GalleryController::class , 'massDestroy'])->name('gallery.mass-destroy');
-    Route::resource('gallery', GalleryController::class);
+    Route::middleware(['permission:view gallery'])->group(function () {
+        Route::delete('gallery/mass-destroy', [GalleryController::class , 'massDestroy'])->middleware('permission:delete gallery')->name('gallery.mass-destroy');
+        Route::resource('gallery', GalleryController::class);
+    });
 
-    // Sliders / Banners
-    Route::resource('sliders', SliderController::class);
-    Route::patch('sliders/reorder', [SliderController::class , 'reorder'])->name('sliders.reorder');
-    Route::patch('sliders/{slider}/toggle-status', [SliderController::class, 'toggleStatus'])->name('sliders.toggleStatus');
-
-    // Partners / Mitra Kerjasama
-    Route::patch('partners/{partner}/toggle-status', [PartnerController::class , 'toggleStatus'])->name('partners.toggle-status');
-    Route::resource('partners', PartnerController::class);
+    // Sliders / Banners & Partners
+    Route::middleware(['permission:view sliders'])->group(function () {
+        Route::resource('sliders', SliderController::class);
+        Route::patch('sliders/reorder', [SliderController::class , 'reorder'])->name('sliders.reorder');
+        Route::patch('sliders/{slider}/toggle-status', [SliderController::class, 'toggleStatus'])->name('sliders.toggleStatus');
+        Route::patch('partners/{partner}/toggle-status', [PartnerController::class , 'toggleStatus'])->name('partners.toggle-status');
+        Route::resource('partners', PartnerController::class);
+    });
 
     // Testimonials
-    Route::resource('testimonials', TestimonialController::class);
-    Route::patch('testimonials/{testimonial}/toggle-status', [TestimonialController::class , 'toggleStatus'])->name('testimonials.toggle-status');
-
-    // Sponsors
-    Route::patch('sponsors/{sponsor}/toggle-status', [SponsorController::class , 'toggleStatus'])->name('sponsors.toggle-status');
-    Route::resource('sponsors', SponsorController::class);
+    Route::middleware(['permission:view testimonials'])->group(function () {
+        Route::resource('testimonials', TestimonialController::class);
+        Route::patch('testimonials/{testimonial}/toggle-status', [TestimonialController::class , 'toggleStatus'])->name('testimonials.toggle-status');
+    });
 
     // Menu Builder
-    Route::resource('menus', MenuController::class);
-    Route::post('menus/{menu}/items', [MenuController::class , 'saveItems'])->name('menus.save-items');
+    Route::middleware(['permission:view menus'])->group(function () {
+        Route::resource('menus', MenuController::class);
+        Route::post('menus/{menu}/items', [MenuController::class , 'saveItems'])->name('menus.save-items');
+    });
 
     // Media Library
-    Route::get('media', [MediaController::class, 'index'])->name('media.index');
-    Route::post('media/upload', [MediaController::class, 'upload'])->name('media.upload');
-    Route::get('media/picker', [MediaController::class, 'picker'])->name('media.picker');
-    Route::get('media/json/{id}', [MediaController::class, 'json'])->name('media.json');
-    Route::get('media/json-by-path', [MediaController::class, 'jsonByPath'])->name('media.json-by-path');
-    Route::resource('media', MediaController::class)->parameters([
-        'media' => 'media'
-    ]);
-    Route::get('media/folders', [MediaController::class, 'folder'])->name('media.folder');
+    Route::middleware(['permission:view media'])->group(function () {
+        Route::get('media', [MediaController::class, 'index'])->name('media.index');
+        Route::post('media/upload', [MediaController::class, 'upload'])->middleware('permission:upload media')->name('media.upload');
+        Route::get('media/picker', [MediaController::class, 'picker'])->name('media.picker');
+        Route::get('media/json/{id}', [MediaController::class, 'json'])->name('media.json');
+        Route::get('media/json-by-path', [MediaController::class, 'jsonByPath'])->name('media.json-by-path');
+        Route::resource('media', MediaController::class)->parameters([
+            'media' => 'media'
+        ]);
+        Route::get('media/folders', [MediaController::class, 'folder'])->name('media.folder');
+    });
 
-    // Infographics
-    Route::resource('infographics', InfographicController::class);
-    Route::post('infographics/{infographic}/activate', [InfographicController::class , 'activate'])->name('infographics.activate');
+    // Settings, Infographics & Sponsors
+    Route::middleware(['permission:view settings'])->group(function () {
+        Route::resource('infographics', InfographicController::class);
+        Route::post('infographics/{infographic}/activate', [InfographicController::class , 'activate'])->name('infographics.activate');
+        Route::patch('sponsors/{sponsor}/toggle-status', [SponsorController::class , 'toggleStatus'])->name('sponsors.toggle-status');
+        Route::resource('sponsors', SponsorController::class);
+        Route::get('settings', [SettingController::class , 'index'])->name('settings.index');
+        Route::post('settings', [SettingController::class , 'update'])->middleware('permission:edit settings')->name('settings.update');
+        Route::get('settings/{group}', [SettingController::class , 'group'])->name('settings.group');
+    });
 
-    // Settings
-    Route::get('settings', [SettingController::class , 'index'])->name('settings.index');
-    Route::post('settings', [SettingController::class , 'update'])->name('settings.update');
-    Route::get('settings/{group}', [SettingController::class , 'group'])->name('settings.group');
-
-    // Users
-    Route::resource('users', UserController::class);
+    // Users (Super Admin only)
+    Route::resource('users', UserController::class)->middleware('role:Super Admin');
 
     // Contact Messages
-    Route::get('contact-messages', [ContactMessageController::class , 'index'])->name('contact-messages.index');
-    Route::get('contact-messages/{message}', [ContactMessageController::class , 'show'])->name('contact-messages.show');
-    Route::post('contact-messages/{message}/reply', [ContactMessageController::class , 'reply'])->name('contact-messages.reply');
-    Route::delete('contact-messages/{message}', [ContactMessageController::class , 'destroy'])->name('contact-messages.destroy');
+    Route::middleware(['permission:view contact messages'])->group(function () {
+        Route::get('contact-messages', [ContactMessageController::class , 'index'])->name('contact-messages.index');
+        Route::get('contact-messages/{message}', [ContactMessageController::class , 'show'])->name('contact-messages.show');
+        Route::post('contact-messages/{message}/reply', [ContactMessageController::class , 'reply'])->middleware('permission:reply contact messages')->name('contact-messages.reply');
+        Route::delete('contact-messages/{message}', [ContactMessageController::class , 'destroy'])->middleware('permission:delete contact messages')->name('contact-messages.destroy');
+    });
 
     // Backup Management
     Route::middleware(['role:Super Admin'])->group(function () {
@@ -211,7 +223,7 @@ Route::group([
     Route::get('/kategori/{slug}', [FrontPostController::class , 'category'])->name('posts.category');
     Route::get('/tag/{slug}', [FrontPostController::class , 'tag'])->name('posts.tag');
     Route::get('/kontak', [ContactController::class , 'index'])->name('contact.index');
-    Route::post('/kontak', [ContactController::class , 'store'])->name('contact.store');
+    Route::post('/kontak', [ContactController::class , 'store'])->middleware('throttle:10,1')->name('contact.store');
     Route::get('/cari', [FrontInfoPageController::class , 'search'])->name('search');
     // Sitemap & Robots
     Route::get('/sitemap.xml', [HomeController::class , 'sitemap'])->name('sitemap');

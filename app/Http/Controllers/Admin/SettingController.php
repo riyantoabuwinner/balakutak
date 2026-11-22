@@ -29,6 +29,10 @@ class SettingController extends Controller
     {
         $group = $request->input('group', 'general');
 
+        $request->validate([
+            'cert_other_file.*' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,pdf|max:10240',
+        ]);
+
         // Handle dynamic Sertifikasi Lainnya (array of name + file)
         if ($request->has('cert_other_name')) {
             $names = $request->input('cert_other_name', []);
@@ -77,7 +81,13 @@ class SettingController extends Controller
         }
 
         foreach ($request->except($skip) as $key => $value) {
+            if (!preg_match('/^[a-z0-9_]+$/i', (string) $key)) {
+                continue;
+            }
             if ($request->hasFile($key)) {
+                $request->validate([
+                    $key => 'file|mimes:jpg,jpeg,png,gif,webp,ico,pdf|max:10240',
+                ]);
                 // Delete old file if exists
                 $oldPath = Setting::get($key);
                 if ($oldPath && Storage::disk('public')->exists($oldPath)) {

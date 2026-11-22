@@ -74,7 +74,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             if (isset($settings['site_abbreviation']) && !empty($settings['site_abbreviation'])) {
-                config(['adminlte.logo' => '<b>' . $settings['site_abbreviation'] . '</b>']);
+                config(['adminlte.logo' => '<b>' . e($settings['site_abbreviation']) . '</b>']);
             }
             else {
                 config(['adminlte.logo' => '<b>Admin</b> Prodi']);
