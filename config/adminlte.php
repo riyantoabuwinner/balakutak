@@ -127,6 +127,7 @@ return [
         ['text' => 'Menu Builder', 'url' => 'admin/menus', 'icon' => 'fas fa-bars', 'can' => 'view menus'],
         ['text' => 'Pesan Kontak', 'url' => 'admin/contact-messages', 'icon' => 'fas fa-envelope', 'can' => 'view contact messages'],
         ['text' => 'Kelola User', 'url' => 'admin/users', 'icon' => 'fas fa-users', 'can' => 'view users'],
+        ['text' => 'Protection Guard', 'url' => 'admin/security-guard', 'icon' => 'fas fa-shield-alt', 'can' => 'view users'],
         ['text' => 'Backup', 'url' => 'admin/backups', 'icon' => 'fas fa-database', 'can' => 'view users'],
         [
             'text' => 'Pengaturan',

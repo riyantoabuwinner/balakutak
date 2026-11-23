@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\SecurityGuardController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\ResearchServiceController;
 use App\Http\Controllers\Admin\SponsorController;
@@ -171,6 +172,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', \App\Htt
             Route::delete('backups/{filename}', [BackupController::class , 'destroy'])->name('backups.destroy');
             Route::patch('backups/schedule', [BackupController::class , 'updateSchedule'])->name('backups.schedule');
             Route::delete('backups', [BackupController::class , 'destroyOld'])->name('backups.clean');
+
+            // YantoSedunia Protection Guard
+            Route::get('security-guard', [SecurityGuardController::class, 'index'])->name('security-guard.index');
+            Route::post('security-guard/block-ip', [SecurityGuardController::class, 'blockIp'])->name('security-guard.block-ip');
+            Route::delete('security-guard/unblock-ip/{blockedIp}', [SecurityGuardController::class, 'unblockIp'])->name('security-guard.unblock-ip');
+            Route::post('security-guard/settings', [SecurityGuardController::class, 'updateSettings'])->name('security-guard.settings');
+            Route::post('security-guard/cleanup', [SecurityGuardController::class, 'runCleanup'])->name('security-guard.cleanup');
+            Route::delete('security-guard/logs', [SecurityGuardController::class, 'clearLogs'])->name('security-guard.clear-logs');
         }
         );
 

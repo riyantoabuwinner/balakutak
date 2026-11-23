@@ -60,6 +60,20 @@ class LoginRequest extends FormRequest
         if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
+            try {
+                \App\Models\SecurityLog::create([
+                    'incident_id' => strtoupper(substr(hash('sha256', $this->ip() . microtime(true)), 0, 12)),
+                    'ip_address' => $this->ip() ?? 'unknown',
+                    'threat_type' => 'Failed Login Attempt',
+                    'severity' => 'medium',
+                    'method' => $this->method(),
+                    'url' => $this->fullUrl(),
+                    'user_agent' => mb_substr((string) $this->userAgent(), 0, 500),
+                    'reason' => 'Failed login for email: ' . $this->string('email'),
+                    'action_taken' => 'monitored',
+                ]);
+            } catch (\Throwable $e) {}
+
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
@@ -87,6 +101,20 @@ class LoginRequest extends FormRequest
         }
 
         event(new Lockout($this));
+
+        try {
+            \App\Models\SecurityLog::create([
+                'incident_id' => strtoupper(substr(hash('sha256', $this->ip() . microtime(true)), 0, 12)),
+                'ip_address' => $this->ip() ?? 'unknown',
+                'threat_type' => 'Brute Force Attack',
+                'severity' => 'high',
+                'method' => $this->method(),
+                'url' => $this->fullUrl(),
+                'user_agent' => mb_substr((string) $this->userAgent(), 0, 500),
+                'reason' => 'Login rate limit exceeded for email: ' . $this->string('email'),
+                'action_taken' => 'throttled',
+            ]);
+        } catch (\Throwable $e) {}
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
