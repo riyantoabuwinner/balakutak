@@ -484,9 +484,9 @@
                         @csrf
 
                         <div class="field-group">
-                            <label for="email" class="field-label">Email Address</label>
-                            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                                class="form-input" placeholder="you@example.com">
+                            <label for="email" class="field-label">Email / Username</label>
+                            <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus
+                                class="form-input" placeholder="Email atau username">
                             <x-input-error :messages="$errors->get('email')" class="mt-1" />
                         </div>
 
