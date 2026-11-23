@@ -462,7 +462,7 @@
                         <div class="protected-by-logo-box">
                             <div class="protected-by-tooltip">
                                 <span class="protected-by-tooltip-title">YantoSedunia Protection Guard</span>
-                                <span class="protected-by-tooltip-sub">SQUAD UT Garis Lurus</span>
+                                <span class="protected-by-tooltip-sub">SQUAD IT Garis Lurus</span>
                             </div>
                             <img src="{{ asset('images/yanto-sedunia-guard.png') }}" alt="YantoSedunia Protection Guard" class="protected-by-logo">
                         </div>
