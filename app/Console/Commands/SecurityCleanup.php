@@ -16,12 +16,14 @@ use App\Models\Page;
 use App\Models\Partner;
 use App\Models\Post;
 use App\Models\ResearchService;
+use App\Models\Setting;
 use App\Models\Slider;
 use App\Models\Sponsor;
 use App\Models\Tag;
 use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class SecurityCleanup extends Command
@@ -131,7 +133,63 @@ class SecurityCleanup extends Command
             $user->forceDelete();
         }
 
+        // Check settings image keys (site_logo, site_logo_white, site_favicon, leader_photo) for solid-color dummy pentest images
+        $resetSettingsCount = 0;
+        foreach (['site_logo', 'site_logo_white', 'site_favicon', 'leader_photo'] as $settingKey) {
+            $val = Setting::get($settingKey);
+            if ($val && Storage::disk('public')->exists($val)) {
+                $fullPath = Storage::disk('public')->path($val);
+                if ($this->isSolidColorDummyImage($fullPath)) {
+                    Storage::disk('public')->delete($val);
+                    Setting::set($settingKey, null);
+                    $resetSettingsCount++;
+                    $this->warn(" - Reset setting '{$settingKey}' (gambar dummy 1 warna dihapus: {$val})");
+                }
+            }
+        }
+        if ($resetSettingsCount > 0) {
+            Cache::forget('site_settings');
+        }
+
         $this->info('Pembersihan database selesai.');
         return self::SUCCESS;
+    }
+
+    private function isSolidColorDummyImage(string $fullPath): bool
+    {
+        if (!function_exists('getimagesize') || !function_exists('imagecreatefromstring')) {
+            return false;
+        }
+        $info = @getimagesize($fullPath);
+        if (!$info) {
+            return false;
+        }
+        $raw = @file_get_contents($fullPath);
+        if ($raw === false) {
+            return false;
+        }
+        $img = @imagecreatefromstring($raw);
+        if (!$img) {
+            return false;
+        }
+
+        $w = imagesx($img);
+        $h = imagesy($img);
+        $colors = [];
+        $stepX = max(1, (int) floor($w / 10));
+        $stepY = max(1, (int) floor($h / 10));
+
+        for ($x = 0; $x < $w; $x += $stepX) {
+            for ($y = 0; $y < $h; $y += $stepY) {
+                $colors[imagecolorat($img, $x, $y)] = true;
+                if (count($colors) > 2) {
+                    imagedestroy($img);
+                    return false;
+                }
+            }
+        }
+
+        imagedestroy($img);
+        return count($colors) <= 2;
     }
 }

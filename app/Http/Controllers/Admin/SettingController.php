@@ -88,13 +88,19 @@ class SettingController extends Controller
                 $request->validate([
                     $key => 'file|mimes:jpg,jpeg,png,gif,webp,ico,pdf|max:10240',
                 ]);
+                $uploadedFile = $request->file($key);
+                if (str_starts_with((string) $uploadedFile->getMimeType(), 'image/') && $uploadedFile->getClientOriginalExtension() !== 'ico') {
+                    if (@getimagesize($uploadedFile->getRealPath()) === false) {
+                        return back()->withErrors([$key => 'File gambar tidak valid.']);
+                    }
+                }
                 // Delete old file if exists
                 $oldPath = Setting::get($key);
                 if ($oldPath && Storage::disk('public')->exists($oldPath)) {
                     Storage::disk('public')->delete($oldPath);
                 }
                 
-                $path = $request->file($key)->store('settings', 'public');
+                $path = $uploadedFile->store('settings', 'public');
                 Setting::set($key, $path);
             }
             else {
