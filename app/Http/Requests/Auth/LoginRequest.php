@@ -30,7 +30,18 @@ class LoginRequest extends FormRequest
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
             'captcha' => ['required', 'string', function ($attribute, $value, $fail) {
-                if (strtolower($value) != session('captcha_answer')) {
+                $expected = session('captcha_answer');
+                $expiresAt = session('captcha_expires_at');
+
+                // Always invalidate captcha immediately (single-use) to prevent replay attacks
+                session()->forget(['captcha_answer', 'captcha_expires_at']);
+
+                if (!$expected || !$expiresAt || now()->timestamp > (int) $expiresAt) {
+                    $fail('Kode verifikasi (captcha) telah kedaluwarsa. Silakan muat ulang captcha.');
+                    return;
+                }
+
+                if (!hash_equals((string) $expected, strtolower(trim((string) $value)))) {
                     $fail('Kode verifikasi (captcha) tidak benar.');
                 }
             }],

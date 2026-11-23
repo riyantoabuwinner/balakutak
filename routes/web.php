@@ -202,6 +202,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', \App\Htt
         Route::impersonate();
     });
 
+// Captcha Route (defined before catch-all /{slug} and outside localization redirect, rate-limited)
+Route::get('/captcha', [\App\Http\Controllers\CaptchaController::class, 'generate'])
+    ->middleware('throttle:30,1')
+    ->name('captcha.generate');
+
 Route::group([
     'prefix' => \Mcamara\LaravelLocalization\Facades\LaravelLocalization::setLocale(),
     'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath']
@@ -239,8 +244,7 @@ Route::group([
     // FAQs
     Route::get('/faqs', [FrontFaqController::class, 'index'])->name('faqs.index');
 
-    // Captcha Route
-    Route::get('/captcha', [\App\Http\Controllers\CaptchaController::class, 'generate'])->name('captcha.generate');
+    // Captcha Route moved outside localization group for reliable image loading & rate limiting
 
     // Auth routes (Breeze)
     require __DIR__ . '/auth.php';
