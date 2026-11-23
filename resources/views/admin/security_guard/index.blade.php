@@ -3,21 +3,21 @@
 @section('title', 'YantoSedunia Protection Guard')
 
 @section('content_header')
-    <div class="d-flex flex-wrap justify-content-between align-items-center bg-navy text-white p-4 rounded shadow-sm">
-        <div class="d-flex align-items-center">
-            <img src="{{ asset('images/yanto-sedunia-guard.png') }}" alt="YantoSedunia Protection Guard" style="height: 62px; width: auto;" class="mr-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center p-4 rounded shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); color: #ffffff;">
+        <div class="d-flex align-items-center" style="min-width: 0; flex: 1;">
+            <img src="{{ asset('images/yanto-sedunia-guard.png') }}" alt="YantoSedunia Protection Guard" style="height: 60px; width: auto; flex-shrink: 0;" class="mr-3">
             <div>
-                <div class="d-flex align-items-center">
-                    <h1 class="m-0 font-weight-bold text-white" style="font-size: 1.45rem;">YantoSedunia Protection Guard</h1>
-                    <span class="badge badge-success ml-2 px-2 py-1"><i class="fas fa-circle text-xs mr-1"></i>{{ $settings['yspg_enabled'] == '1' ? 'ACTIVE SHIELD' : 'PAUSED' }}</span>
+                <div class="d-flex flex-wrap align-items-center">
+                    <h1 class="m-0 font-weight-bold" style="font-size: 1.4rem; color: #ffffff !important; line-height: 1.3;">YantoSedunia Protection Guard</h1>
+                    <span class="badge badge-success ml-2 px-2 py-1" style="font-size: 11px;"><i class="fas fa-circle text-xs mr-1"></i>{{ $settings['yspg_enabled'] == '1' ? 'ACTIVE SHIELD' : 'PAUSED' }}</span>
                 </div>
-                <p class="mb-0 text-light opacity-75 text-sm">Smart Website Security &amp; Cyber Attack Protection Engine &mdash; <em>"Detect Early. Defend Smart. Protect Always."</em></p>
+                <p class="mb-0 mt-1 text-sm" style="color: #cbd5e1 !important;">Smart Website Security &amp; Cyber Attack Protection Engine &mdash; <em>"Detect Early. Defend Smart. Protect Always."</em></p>
             </div>
         </div>
-        <div class="mt-3 mt-md-0">
+        <div class="mt-3 mt-md-0 ml-md-3" style="flex-shrink: 0;">
             <form action="{{ route('admin.security-guard.cleanup') }}" method="POST" class="d-inline" onsubmit="return confirm('Jalankan pembersihan otomatis database dan direktori upload sekarang?')">
                 @csrf
-                <button type="submit" class="btn btn-warning btn-sm font-weight-bold shadow-sm px-3 py-2">
+                <button type="submit" class="btn btn-warning btn-sm font-weight-bold shadow-sm px-3 py-2 text-dark">
                     <i class="fas fa-broom mr-1"></i> Jalankan Security Cleanup
                 </button>
             </form>
@@ -45,10 +45,10 @@
         </div>
     </div>
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-gradient-warning shadow-sm">
+        <div class="small-box bg-gradient-warning shadow-sm text-dark">
             <div class="inner">
-                <h3>{{ number_format($threatsToday) }}</h3>
-                <p>Insiden Hari Ini</p>
+                <h3 style="color: #1e293b !important;">{{ number_format($threatsToday) }}</h3>
+                <p style="color: #334155 !important; font-weight: 600;">Insiden Hari Ini</p>
             </div>
             <div class="icon"><i class="fas fa-bolt"></i></div>
         </div>
