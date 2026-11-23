@@ -10,6 +10,7 @@
 [![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-777BB4.svg?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
 [![UI Theme](https://img.shields.io/badge/Themes-20%2B%20Premium%20Palettes-0ea5e9.svg?style=for-the-badge)](#5-keunggulan-aplikasi-competitive-advantages)
 [![Role Based](https://img.shields.io/badge/RBAC-6%20User%20Roles-10b981.svg?style=for-the-badge)](#6-panduan-penggunaan-detail-semua-role-user-step-by-step)
+[![Protected By](https://img.shields.io/badge/Protected_By-YantoSedunia_Protection_Guard-059669?style=for-the-badge)](#%EF%B8%8F-yantosedunia-protection-guard)
 
 <br />
 
@@ -20,6 +21,28 @@ Klik tombol di bawah ini untuk mengunduh dokumen spesifikasi teknis, arsitektur,
 [![Lihat Panduan di Aplikasi](https://img.shields.io/badge/🧭_MENU_PANDUAN_SISTEM-/admin/guide-1D4ED8?style=for-the-badge)](resources/views/admin/guide/index.blade.php)
 
 </div>
+
+---
+
+## 🛡️ YantoSedunia Protection Guard
+### *Smart Website Security & Cyber Attack Protection Engine — SQUAD IT Garis Lurus*
+
+<div align="center">
+<img src="public/images/yanto-sedunia-guard.png" width="140" alt="YantoSedunia Protection Guard" />
+<br />
+<strong><em>"Detect Early. Defend Smart. Protect Always."</em></strong>
+</div>
+
+**YantoSedunia Protection Guard** adalah engine keamanan siber independen yang terintegrasi penuh di dalam BalaKutaK CMS untuk memberikan perlindungan berlapis terhadap berbagai ancaman, aktivitas mencurigakan, percobaan peretasan, dan serangan siber melalui pendekatan **Prevent, Detect, Protect, and Monitor**:
+
+* 🛡️ **Intelligent Web Application Firewall (WAF)**: Menyaring dan memvalidasi setiap HTTP Request yang masuk untuk memblokir pola berbahaya.
+* 🔍 **Cyber Attack Detection**: Mendeteksi SQL Injection, Cross-Site Scripting (XSS), Local File Inclusion (LFI), Path Traversal, PHP/Command Injection, Malicious Scanner, dan upload file berbahaya.
+* 🚫 **IP Reputation & Blocking System**: Mengidentifikasi IP mencurigakan dan menerapkan pembatasan atau pemblokiran otomatis maupun manual (sementara/permanen).
+* 🔐 **Brute Force Protection**: Melindungi halaman autentikasi melalui pembatasan percobaan login dan pencatatan insiden otomatis.
+* 📊 **Real-Time Threat Monitoring**: Memantau tren serangan 7 hari, distribusi ancaman, dan catatan insiden langsung di dashboard `/admin/security-guard`.
+* ⚡ **Automated Threat Response**: Menjalankan mitigasi otomatis (penolakan HTTP `403`, auto-ban, dan peringatan hukum perangkat penyerang).
+* 🧾 **Security Audit & Integrity Monitoring**: Memeriksa integritas konfigurasi keamanan, mendeteksi password default, dan menyediakan pembersihan otomatis (`php artisan security:cleanup`).
+* 🚨 **Security Alert & Reporting**: Menyediakan log insiden lengkap (`security_logs` & `storage/logs/security.log`) untuk tindak lanjut cepat administrator.
 
 ---
 
