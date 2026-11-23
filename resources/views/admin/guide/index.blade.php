@@ -91,7 +91,7 @@
                         <h2 class="font-weight-bold mb-1">BalaKutaK CMS</h2>
                         <p class="mb-3 text-warning font-weight-bold letter-spacing-1">ENTERPRISE & ACADEMIC CONTENT MANAGEMENT SYSTEM</p>
                         <div class="mb-3">
-                            <span class="badge badge-light px-3 py-1 mr-1"><i class="fas fa-code-branch mr-1 text-primary"></i>Versi 2.0.1 Stable</span>
+                            <span class="badge badge-light px-3 py-1 mr-1"><i class="fas fa-code-branch mr-1 text-primary"></i>Versi 2.1.0 Stable</span>
                             <span class="badge badge-warning px-3 py-1 mr-1"><i class="fab fa-laravel mr-1"></i>Laravel 11.x</span>
                             <span class="badge badge-success px-3 py-1"><i class="fas fa-check-circle mr-1"></i>Open-Source MIT</span>
                         </div>
@@ -959,7 +959,7 @@
                         <h4 class="mb-0 font-weight-bold"><i class="fas fa-camera-retro mr-2 text-warning"></i>7. Galeri Screenshot Aplikasi Lengkap</h4>
                     </div>
                     <div class="card-body p-4">
-                        <p class="text-secondary mb-4">Berikut adalah tangkapan layar lengkap antarmuka Frontend (Portal Publik) dan Backend (Admin Panel) pada <strong>BalaKutaK CMS v2.0.1 Stable</strong>:</p>
+                        <p class="text-secondary mb-4">Berikut adalah tangkapan layar lengkap antarmuka Frontend (Portal Publik) dan Backend (Admin Panel) pada <strong>BalaKutaK CMS v2.1.0 Stable</strong>:</p>
                         <div class="row">
                             @php
                                 $screenshots = [

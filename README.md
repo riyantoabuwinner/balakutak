@@ -3,7 +3,7 @@
 <img src="database/seeders/assets/images/logo.png" width="95" alt="BalaKutaK CMS Logo" />
 
 # 🦑 BalaKutaK CMS — Official System Documentation
-### *Enterprise & Academic Open-Source Content Management System (v2.0.1 Stable)*
+### *Enterprise & Academic Open-Source Content Management System (v2.1.0 Stable)*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Laravel Version](https://img.shields.io/badge/Laravel-11.x-FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
@@ -16,7 +16,7 @@
 ### 📥 Unduh Buku Panduan & Dokumentasi Resmi (PDF)
 Klik tombol di bawah ini untuk mengunduh dokumen spesifikasi teknis, arsitektur, proses bisnis, regulasi, dan panduan penggunaan *step-by-step* lengkap dalam format **PDF Siap Cetak**:
 
-[![Download PDF Manual](https://img.shields.io/badge/📄_DOWNLOAD_DOKUMENTASI_LENGKAP_(PDF)-BalaKutaK_CMS_v2.0.1-DC2626?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](docs/Panduan-Lengkap-BalaKutaK-CMS.pdf)
+[![Download PDF Manual](https://img.shields.io/badge/📄_DOWNLOAD_DOKUMENTASI_LENGKAP_(PDF)-BalaKutaK_CMS_v2.1.0-DC2626?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](docs/Panduan-Lengkap-BalaKutaK-CMS.pdf)
 [![Lihat Panduan di Aplikasi](https://img.shields.io/badge/🧭_MENU_PANDUAN_SISTEM-/admin/guide-1D4ED8?style=for-the-badge)](resources/views/admin/guide/index.blade.php)
 
 </div>
@@ -591,7 +591,7 @@ Setelah menjalankan perintah `php artisan migrate:fresh --seed`, Anda dapat lang
 
 ## 📸 7. Galeri Pratinjau & Screenshot Aplikasi Lengkap
 
-Berikut adalah dokumentasi visual lengkap dari antarmuka **Frontend (Publik)** dan **Backend (Admin Panel)** pada **BalaKutaK CMS v2.0.1**:
+Berikut adalah dokumentasi visual lengkap dari antarmuka **Frontend (Publik)** dan **Backend (Admin Panel)** pada **BalaKutaK CMS v2.1.0**:
 
 ### 7.1 Antarmuka Portal Publik (Frontend)
 | 🏠 Beranda Utama (Immersive Hero & Dynamic Theme) | 🔐 Halaman Login Resmi (Modern Glass UI) |
@@ -674,13 +674,13 @@ php artisan serve
 <div align="center">
 
 ### 📥 Butuh Dokumentasi Lengkap dalam Format PDF untuk Dicetak atau Dibagikan?
-Unduh buku manual resmi **BalaKutaK CMS v2.0.1** yang mencakup Deskripsi Aplikasi, Arsitektur, Proses Bisnis, Regulasi, Keunggulan, dan Panduan Step-by-Step untuk Semua Role User lengkap dengan gambar tangkapan layar:
+Unduh buku manual resmi **BalaKutaK CMS v2.1.0** yang mencakup Deskripsi Aplikasi, Arsitektur, Proses Bisnis, Regulasi, Keunggulan, dan Panduan Step-by-Step untuk Semua Role User lengkap dengan gambar tangkapan layar:
 
 [![Download Official PDF Documentation](https://img.shields.io/badge/📥_UNDUH_BUKU_PANDUAN_LENGKAP_(PDF)-Klik_Di_Sini-DC2626?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](docs/Panduan-Lengkap-BalaKutaK-CMS.pdf)
 
 <br />
 
 **Dikembangkan dengan ❤️ oleh [riyantoabuwinner](https://github.com/riyantoabuwinner)**  
-*BalaKutaK CMS v2.0.1 Stable — Ringan, Cerdas & Adaptif*
+*BalaKutaK CMS v2.1.0 Stable — Ringan, Cerdas & Adaptif*
 
 </div>
