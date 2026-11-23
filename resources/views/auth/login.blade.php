@@ -351,6 +351,65 @@
             margin-bottom: 6px;
         }
 
+        .protected-by-logo-box {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .protected-by-tooltip {
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 10px);
+            transform: translateX(-50%) translateY(6px);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(52, 211, 153, 0.45);
+            border-radius: 10px;
+            padding: 8px 14px;
+            white-space: nowrap;
+            text-align: center;
+            box-shadow: 0 12px 28px rgba(2, 6, 23, 0.55);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+            z-index: 20;
+        }
+
+        .protected-by-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
+        }
+
+        .protected-by-logo-box:hover .protected-by-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .protected-by-tooltip-title {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #6ee7b7;
+            letter-spacing: 0.03em;
+        }
+
+        .protected-by-tooltip-sub {
+            display: block;
+            font-size: 9.5px;
+            font-weight: 500;
+            color: #cbd5e1;
+            margin-top: 2px;
+            letter-spacing: 0.06em;
+        }
+
         .protected-by-logo {
             height: 68px;
             width: auto;
@@ -359,8 +418,8 @@
             transition: transform 0.25s ease;
         }
 
-        .protected-by-logo:hover {
-            transform: scale(1.05);
+        .protected-by-logo-box:hover .protected-by-logo {
+            transform: scale(1.06);
         }
 
         @media (max-width: 768px) {
@@ -400,7 +459,13 @@
 
                     <div class="protected-by-wrap">
                         <span class="protected-by-label">Protected by:</span>
-                        <img src="{{ asset('images/yanto-sedunia-guard.png') }}" alt="Yanto Sedunia Protection Guard" class="protected-by-logo">
+                        <div class="protected-by-logo-box">
+                            <div class="protected-by-tooltip">
+                                <span class="protected-by-tooltip-title">YantoSedunia Protection Guard</span>
+                                <span class="protected-by-tooltip-sub">SQUAD UT Garis Lurus</span>
+                            </div>
+                            <img src="{{ asset('images/yanto-sedunia-guard.png') }}" alt="YantoSedunia Protection Guard" class="protected-by-logo">
+                        </div>
                     </div>
                 </div>
             </div>
