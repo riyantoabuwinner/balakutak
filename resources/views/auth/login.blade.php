@@ -132,7 +132,7 @@
                             <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Human Verification</label>
                             <div class="flex items-center gap-2">
                                 <div class="flex-1 h-16 bg-white rounded-xl border border-slate-200 overflow-hidden flex items-center justify-center p-0.5 relative shadow-inner">
-                                    <img src="{{ route('captcha.generate') }}?v={{ time() }}" id="captcha-img" class="h-full w-full object-cover rounded-lg" alt="Captcha">
+                                    <img src="{{ route('captcha.generate', [], false) }}?v={{ time() }}" id="captcha-img" class="h-full w-full object-cover rounded-lg" alt="Captcha">
                                 </div>
                                 <button type="button" onclick="refreshCaptcha()" title="Refresh Code" class="h-10 w-10 flex items-center justify-center bg-indigo-50 border border-indigo-100 rounded-xl text-indigo-500 hover:text-white hover:bg-indigo-600 transition-all shadow-sm active:scale-95">
                                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +175,7 @@
     <script>
         function refreshCaptcha() {
             const img = document.getElementById('captcha-img');
-            img.src = "{{ route('captcha.generate') }}?id=" + Math.random();
+            img.src = "{{ route('captcha.generate', [], false) }}?id=" + Math.random();
         }
 
         function togglePassword() {

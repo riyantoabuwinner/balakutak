@@ -25,7 +25,9 @@ class CaptchaController extends Controller
             'captcha_expires_at' => now()->addMinutes(5)->timestamp,
         ]);
 
-        $pngData = $this->renderWithIntervention($captchaText) ?? $this->renderWithNativeGd($captchaText);
+        $pngData = $this->renderWithIntervention($captchaText)
+            ?? $this->renderWithNativeGd($captchaText)
+            ?? $this->renderPurePhpPng($captchaText);
 
         return response($pngData, 200, [
             'Content-Type' => 'image/png',
@@ -88,8 +90,12 @@ class CaptchaController extends Controller
         }
     }
 
-    private function renderWithNativeGd(string $captchaText): string
+    private function renderWithNativeGd(string $captchaText): ?string
     {
+        if (!function_exists('imagecreatetruecolor') || !function_exists('imagepng')) {
+            return null;
+        }
+
         $width = 280;
         $height = 80;
         $img = imagecreatetruecolor($width, $height);
@@ -113,6 +119,95 @@ class CaptchaController extends Controller
         $data = ob_get_clean();
         imagedestroy($img);
 
-        return $data ?: '';
+        return $data ?: null;
+    }
+
+    /**
+     * Pure-PHP PNG fallback using zlib (requires no GD extension).
+     */
+    private function renderPurePhpPng(string $captchaText): string
+    {
+        $font = [
+            'A' => ['01110','10001','10001','11111','10001','10001','10001'],
+            'B' => ['11110','10001','10001','11110','10001','10001','11110'],
+            'C' => ['01110','10001','10000','10000','10000','10001','01110'],
+            'D' => ['11100','10010','10001','10001','10001','10010','11100'],
+            'E' => ['11111','10000','10000','11110','10000','10000','11111'],
+            'F' => ['11111','10000','10000','11110','10000','10000','10000'],
+            'G' => ['01110','10001','10000','10111','10001','10001','01110'],
+            'H' => ['10001','10001','10001','11111','10001','10001','10001'],
+            'J' => ['00111','00010','00010','00010','10010','10010','01100'],
+            'K' => ['10001','10010','10100','11000','10100','10010','10001'],
+            'L' => ['10000','10000','10000','10000','10000','10000','11111'],
+            'M' => ['10001','11011','10101','10101','10001','10001','10001'],
+            'N' => ['10001','11001','10101','10011','10001','10001','10001'],
+            'P' => ['11110','10001','10001','11110','10000','10000','10000'],
+            'Q' => ['01110','10001','10001','10001','10101','10010','01101'],
+            'R' => ['11110','10001','10001','11110','10100','10010','10001'],
+            'S' => ['01111','10000','10000','01110','00001','00001','11110'],
+            'T' => ['11111','00100','00100','00100','00100','00100','00100'],
+            'U' => ['10001','10001','10001','10001','10001','10001','01110'],
+            'V' => ['10001','10001','10001','10001','10001','01010','00100'],
+            'W' => ['10001','10001','10001','10101','10101','11011','10001'],
+            'X' => ['10001','10001','01010','00100','01010','10001','10001'],
+            'Y' => ['10001','10001','01010','00100','00100','00100','00100'],
+            'Z' => ['11111','00001','00010','00100','01000','10000','11111'],
+            '2' => ['01110','10001','00001','00110','01000','10000','11111'],
+            '3' => ['11110','00001','00001','01110','00001','00001','11110'],
+            '4' => ['00010','00110','01010','10010','11111','00010','00010'],
+            '5' => ['11111','10000','11110','00001','00001','10001','01110'],
+            '6' => ['01110','10000','11110','10001','10001','10001','01110'],
+            '7' => ['11111','00001','00010','00100','01000','01000','01000'],
+            '8' => ['01110','10001','10001','01110','10001','10001','01110'],
+            '9' => ['01110','10001','10001','01111','00001','00001','01110'],
+        ];
+
+        $width = 280;
+        $height = 80;
+        $scale = 5;
+        $raw = '';
+        $grid = array_fill(0, $height, array_fill(0, $width, [248, 250, 252]));
+
+        $startX = 24;
+        for ($c = 0; $c < strlen($captchaText); $c++) {
+            $glyph = $font[$captchaText[$c]] ?? $font['A'];
+            $offsetY = random_int(18, 26);
+            for ($row = 0; $row < 7; $row++) {
+                for ($col = 0; $col < 5; $col++) {
+                    if ($glyph[$row][$col] === '1') {
+                        for ($sy = 0; $sy < $scale; $sy++) {
+                            for ($sx = 0; $sx < $scale; $sx++) {
+                                $py = $offsetY + $row * $scale + $sy;
+                                $px = $startX + $col * $scale + $sx;
+                                if ($py >= 0 && $py < $height && $px >= 0 && $px < $width) {
+                                    $grid[$py][$px] = [30, 27, 75];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            $startX += 40;
+        }
+
+        for ($y = 0; $y < $height; $y++) {
+            $raw .= "\x00";
+            for ($x = 0; $x < $width; $x++) {
+                $px = $grid[$y][$x];
+                $raw .= chr($px[0]) . chr($px[1]) . chr($px[2]);
+            }
+        }
+
+        $chunk = function (string $type, string $data): string {
+            return pack('N', strlen($data)) . $type . $data . pack('N', crc32($type . $data));
+        };
+
+        $ihdr = pack('NNCCCCC', $width, $height, 8, 2, 0, 0, 0);
+        $idat = gzcompress($raw, 6);
+
+        return "\x89PNG\r\n\x1a\n"
+            . $chunk('IHDR', $ihdr)
+            . $chunk('IDAT', $idat)
+            . $chunk('IEND', '');
     }
 }
