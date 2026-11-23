@@ -51,6 +51,9 @@ class GalleryController extends Controller
         if ($request->type === 'photo') {
             $request->validate(['file_path' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:10240']);
             $file = $request->file('file_path');
+            if (@getimagesize($file->getRealPath()) === false) {
+                return back()->withErrors(['file_path' => 'File bukan gambar valid (JPG/PNG/GIF/WEBP).'])->withInput();
+            }
             $gallery->file_path = $file->store('gallery', 'public');
             
             // Register in Media Library
@@ -104,6 +107,9 @@ class GalleryController extends Controller
         if ($request->type === 'photo') {
             if ($request->hasFile('file_path')) {
                 $request->validate(['file_path' => 'image|mimes:jpg,jpeg,png,gif,webp|max:10240']);
+                if (@getimagesize($request->file('file_path')->getRealPath()) === false) {
+                    return back()->withErrors(['file_path' => 'File bukan gambar valid (JPG/PNG/GIF/WEBP).'])->withInput();
+                }
                 if ($gallery->file_path) {
                     Storage::disk('public')->delete($gallery->file_path);
                     Media::where('path', $gallery->file_path)->delete();

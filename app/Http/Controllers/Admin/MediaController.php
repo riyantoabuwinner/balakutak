@@ -93,6 +93,9 @@ class MediaController extends Controller
 
             // Compress images before storing
             if (str_starts_with($file->getMimeType(), 'image/')) {
+                if (@getimagesize($file->getRealPath()) === false) {
+                    continue;
+                }
                 $image = $this->imageManager->read($file->getRealPath());
 
                 // Resize if too large
