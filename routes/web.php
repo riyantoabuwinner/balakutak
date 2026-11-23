@@ -200,11 +200,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', \App\Htt
         Route::get('guide/pdf', function () {
             $pdfPath = base_path('docs/Panduan-Lengkap-BalaKutaK-CMS.pdf');
             if (file_exists($pdfPath)) {
-                return response()->download($pdfPath, 'Panduan-Lengkap-BalaKutaK-CMS-v2.0.1.pdf');
+                return response()->download($pdfPath, 'Panduan-Lengkap-BalaKutaK-CMS-v2.1.0.pdf');
             }
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.guide.pdf')
                 ->setPaper('a4', 'portrait');
-            return $pdf->download('Panduan-Lengkap-BalaKutaK-CMS-v2.0.1.pdf');
+            return $pdf->download('Panduan-Lengkap-BalaKutaK-CMS-v2.1.0.pdf');
         })->name('guide.pdf');
 
         // Impersonate Routes

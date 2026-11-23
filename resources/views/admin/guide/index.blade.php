@@ -167,8 +167,8 @@
                                         <td>Widget <em>Smart Chatbot</em> interaktif dan <em>Accessibility Toolbar</em> ramah disabilitas (<em>Text-to-Speech</em> Bahasa Indonesia, Kontras Tinggi, Grayscale, Perbesar Huruf) yang adaptif dengan warna tema.</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-weight-bold"><i class="fas fa-shield-alt text-danger mr-2"></i>System Security & Governance</td>
-                                        <td>Kontrol Akses Berbasis Role (Spatie RBAC), <em>User Impersonation</em>, Pencadangan Otomatis/Manual (<code>.zip</code>), Manajemen SEO & Sitemap XML otomatis, serta Audit Log Aktivitas.</td>
+                                        <td class="font-weight-bold"><i class="fas fa-shield-alt text-danger mr-2"></i>System Security &amp; YantoSedunia Protection Guard</td>
+                                        <td><strong>YantoSedunia Protection Guard</strong> (Intelligent WAF SQLi/XSS/LFI/RCE, IP Reputation &amp; Auto-Ban, Brute Force Protection, Real-Time Threat Monitoring, Security Audit &amp; Cleanup), Spatie RBAC, <em>User Impersonation</em>, Backup (<code>.zip</code>), SEO &amp; Audit Log.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -652,6 +652,15 @@
                                         <h6 class="font-weight-bold mb-0">8. Ultra-Lightweight, Bilingual & SEO Ready</h6>
                                     </div>
                                     <p class="text-sm text-secondary mb-0">Performa pemuatan halaman super cepat berbasis Laravel 11, mendukung penuh dua bahasa (ID/EN), Smart Dark Mode, serta pembuatan <code>sitemap.xml</code> otomatis.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-0">
+                                <div class="p-3 border rounded bg-navy text-white shadow-xs">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="badge badge-success p-2 mr-2"><i class="fas fa-shield-alt fa-lg"></i></span>
+                                        <h6 class="font-weight-bold mb-0 text-white">9. YantoSedunia Protection Guard (Smart Cyber Attack Protection Engine)</h6>
+                                    </div>
+                                    <p class="text-sm text-light mb-0">Engine keamanan berlapis (<em>Prevent, Detect, Protect, and Monitor</em>) dengan Intelligent WAF (SQLi, XSS, LFI, RCE, Scanner), IP Reputation &amp; Auto-Ban, Brute Force Protection, Security Audit, dan Real-Time Threat Monitoring &mdash; <em>"Detect Early. Defend Smart. Protect Always."</em></p>
                                 </div>
                             </div>
                         </div>

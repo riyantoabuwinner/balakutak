@@ -85,7 +85,7 @@ Meskipun dilengkapi dengan **Academic & Accreditation Suite** yang sangat kompre
 | **🎓 Academic & Tridharma Suite** | Direktori SDM/Dosen, Struktur Kurikulum Semester, Kalender Akademik, Layanan Akademik, Penelitian & Pengabdian Masyarakat (seluruhnya mendukung *Export/Import Excel*), serta Pusat Dokumen & Sertifikat Akreditasi. |
 | **🛠️ Site & Visual Builder** | *Drag-and-Drop Menu Builder* (Header & Footer bertingkat), *Visual Page Builder* (penyusunan blok tanpa koding), *Media Library* terpusat, Galeri Album, Slider, Infografis, Mitra, dan Sponsor. |
 | **🤖 Smart Assist & Accessibility** | Widget *Smart Chatbot* interaktif dan *Accessibility Suite* ramah disabilitas (*Text-to-Speech*, Kontras Tinggi, Grayscale, Perbesar Font) yang adaptif terhadap warna tema. |
-| **🛡️ System Security & Governance** | Kontrol Akses Berbasis Role (Spatie RBAC), *User Impersonation*, Pencadangan Otomatis/Manual (`.zip`), Manajemen SEO & Sitemap XML otomatis, serta Audit Log Aktivitas. |
+| **🛡️ System Security & YantoSedunia Protection Guard** | **YantoSedunia Protection Guard** (Intelligent WAF, Cyber Attack Detection SQLi/XSS/LFI/RCE, IP Reputation & Auto-Ban, Brute Force Protection, Real-Time Threat Monitoring, Security Audit & Cleanup), Kontrol Akses Role (Spatie RBAC), *User Impersonation*, Backup (`.zip`), SEO & Audit Log. |
 
 ---
 
@@ -311,6 +311,7 @@ Mengapa **BalaKutaK CMS** menjadi pilihan unggul dibandingkan CMS konvensional?
 | **6** | **🕵️ One-Click User Impersonation** | *Super Admin* dapat masuk ke sesi pengguna mana pun (*Admin Prodi, Editor, Dosen, Operator*) hanya dengan satu klik untuk melakukan *troubleshooting* atau pendampingan teknis tanpa meminta kata sandi. |
 | **7** | **💾 Integrated One-Click & Scheduled Backup** | Pencadangan database dan file aplikasi dalam format `.zip` dapat dilakukan langsung dari panel admin, lengkap dengan penjadwalan otomatis (Harian/Mingguan/Bulanan) dan fitur pembersihan cadangan lama. |
 | **8** | **⚡ Ultra-Lightweight, Bilingual & SEO Automated** | Performa pemuatan halaman sangat cepat berkat arsitektur bersih Laravel 11, mendukung penuh dua bahasa (ID/EN), *Smart Dark Mode*, serta generasi `sitemap.xml` dan meta SEO otomatis. |
+| **9** | **🛡️ YantoSedunia Protection Guard (Cyber Attack Protection Engine)** | Engine keamanan berlapis (*Prevent, Detect, Protect, and Monitor*) dengan Intelligent WAF (SQLi, XSS, LFI, RCE, Scanner), IP Reputation & Auto-Ban, Brute Force Protection, Security Audit, dan Real-Time Threat Monitoring — *"Detect Early. Defend Smart. Protect Always."* |
 
 ---
 
@@ -404,6 +405,16 @@ Setelah menjalankan perintah `php artisan migrate:fresh --seed`, Anda dapat lang
 4. **Unduh & Bersihkan**: Klik tombol **Download** pada daftar file backup untuk menyimpan salinan `.zip` ke komputer lokal Anda, atau klik **Bersihkan Backup Lama** untuk menghemat ruang disk server.
 
 ![Sistem Backup](docs/screenshots/admin-backups.png)
+
+#### Langkah 9 — Mengelola Keamanan Sistem dengan YantoSedunia Protection Guard
+> **Filosofi:** *"Detect Early. Defend Smart. Protect Always."* — Pendekatan **Prevent, Detect, Protect, and Monitor**.
+
+1. Buka menu **SISTEM → Protection Guard** (`/admin/security-guard`).
+2. **Real-Time Threat Monitoring**: Pantau grafik tren serangan 7 hari, distribusi jenis serangan (*SQL Injection, XSS, LFI/Path Traversal, PHP/RCE, Malicious Scanner, Dangerous Upload, Brute Force*), serta 4 kartu metrik ancaman.
+3. **Security Alerts & Logs**: Tinjau detail insiden (ID Insiden, IP Penyerang, URL, User-Agent, dan aksi blokir otomatis) melalui filter pencarian.
+4. **IP Reputation & Blocking System**: Blokir IP mencurigakan secara manual (durasi sementara atau permanen) atau buka blokir IP yang masuk daftar *Auto-Ban*.
+5. **Security Audit & Integrity + Cleanup**: Periksa status integritas sistem (`/register` nonaktif, `.htaccess` upload blocker, `APP_DEBUG`, password default, `php-gd`) dan klik tombol **Jalankan Security Cleanup** untuk membersihkan artefak serangan/spam secara otomatis.
+6. **Engine Settings**: Atur sakelar WAF, Auto-Ban, batas percobaan (*Max Strikes*), dan durasi pemblokiran IP.
 
 ---
 

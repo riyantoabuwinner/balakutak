@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Dokumentasi & Panduan Resmi BalaKutaK CMS v2.0.1</title>
+    <title>Dokumentasi & Panduan Resmi BalaKutaK CMS v2.1.0</title>
     <style>
         @page {
             margin: 24mm 16mm 20mm 16mm;
@@ -314,13 +314,13 @@
     <table style="width: 100%; border-collapse: collapse;">
         <tr>
             <td style="text-align: left; font-weight: bold; color: #0f172a;">BALAKUTAK CMS — DOKUMENTASI & PANDUAN LENGKAP SISTEM</td>
-            <td style="text-align: right;">Versi 2.0.1 Stable | Open-Source Enterprise & Academic CMS</td>
+            <td style="text-align: right;">Versi 2.1.0 Stable | Open-Source Enterprise & Academic CMS</td>
         </tr>
     </table>
 </header>
 
 <footer>
-    Dokumen Resmi Panduan Penggunaan & Arsitektur <strong>BalaKutaK CMS v2.0.1</strong> &bull; Halaman <span class="page-number"></span>
+    Dokumen Resmi Panduan Penggunaan & Arsitektur <strong>BalaKutaK CMS v2.1.0</strong> &bull; Halaman <span class="page-number"></span>
 </footer>
 
 <!-- =========================================================
@@ -332,7 +332,7 @@
     @endif
     <div><span class="cover-badge">OFFICIAL SYSTEM DOCUMENTATION & USER MANUAL</span></div>
     <div class="cover-title">BALAKUTAK CMS</div>
-    <div class="cover-subtitle">Enterprise & Academic Content Management System (v2.0.1 Stable)</div>
+    <div class="cover-subtitle">Enterprise & Academic Content Management System (v2.1.0 Stable)</div>
     <p class="cover-desc">
         Dokumen Spesifikasi Teknis, Arsitektur Sistem, Proses Bisnis, Regulasi Tata Kelola, Keunggulan Komparatif, serta Panduan Operasional Step-by-Step untuk Seluruh Role Pengguna.
     </p>
@@ -351,7 +351,7 @@
             </tr>
             <tr>
                 <td class="label">Versi Rilis</td>
-                <td>v2.0.1 Stable (Production Ready)</td>
+                <td>v2.1.0 Stable (Production Ready)</td>
             </tr>
             <tr>
                 <td class="label">Basis Teknologi</td>
@@ -377,7 +377,7 @@
      DAFTAR ISI (TABLE OF CONTENTS)
      ========================================================= -->
 <h1 class="chapter-title">DAFTAR ISI DOKUMENTASI</h1>
-<p>Dokumen manual resmi ini disusun secara sistematis sebagai acuan arsitektur, tata kelola, dan operasional penggunaan <strong>BalaKutaK CMS v2.0.1</strong> bagi seluruh pemangku kepentingan:</p>
+<p>Dokumen manual resmi ini disusun secara sistematis sebagai acuan arsitektur, tata kelola, dan operasional penggunaan <strong>BalaKutaK CMS v2.1.0</strong> bagi seluruh pemangku kepentingan:</p>
 
 <table class="toc-table">
     <tr class="toc-chapter">
@@ -1010,6 +1010,14 @@
 </div>
 @endif
 
+<div class="step-box"><span class="step-num">7</span> <strong>Keamanan Berlapis dengan YantoSedunia Protection Guard:</strong>
+    <ul>
+        <li>Buka menu <strong>SISTEM &raquo; Protection Guard</strong> (<code>/admin/security-guard</code>).</li>
+        <li>Pantau grafik tren ancaman 7 hari, daftar insiden (SQLi, XSS, LFI, RCE, Scanner, Brute Force), serta kelola pemblokiran IP otomatis/manual (<strong>IP Reputation &amp; Blocking</strong>).</li>
+        <li>Gunakan tab <strong>Security Audit &amp; Integrity</strong> dan tombol <strong>Jalankan Security Cleanup</strong> untuk memindai konfigurasi keamanan serta membersihkan artefak berbahaya secara otomatis.</li>
+    </ul>
+</div>
+
 <!-- ROLE 2: ADMIN PRODI -->
 <h2 class="section-title">6.2 Panduan Role 2: Admin Prodi (<code>admin@prodi.ac.id</code>)</h2>
 <div class="role-card">
@@ -1199,7 +1207,7 @@
      BAB 7: GALERI VISUAL & SCREENSHOT APLIKASI LENGKAP
      ========================================================= -->
 <h1 class="chapter-title">BAB 7. GALERI VISUAL &amp; SCREENSHOT APLIKASI LENGKAP</h1>
-<p>Berikut adalah rekapitulasi visual 10 antarmuka utama (Frontend &amp; Backend) pada <strong>BalaKutaK CMS v2.0.1 Stable</strong>:</p>
+<p>Berikut adalah rekapitulasi visual 10 antarmuka utama (Frontend &amp; Backend) pada <strong>BalaKutaK CMS v2.1.0 Stable</strong>:</p>
 
 <table style="width:100%; border-collapse: collapse; margin-bottom: 10px;">
     <tr>
@@ -1293,7 +1301,7 @@
 
 <div class="callout-success">
     <strong>Dokumentasi Selesai &amp; Terverifikasi:</strong><br>
-    Seluruh modul, hak akses role pengguna, arsitektur, dan alur kerja pada dokumen ini telah disesuaikan dengan rilis <strong>BalaKutaK CMS v2.0.1 Stable</strong>. Dikembangkan dengan dedikasi tinggi untuk kemajuan ekosistem digital Indonesia.
+    Seluruh modul, hak akses role pengguna, arsitektur, dan alur kerja pada dokumen ini telah disesuaikan dengan rilis <strong>BalaKutaK CMS v2.1.0 Stable</strong>. Dikembangkan dengan dedikasi tinggi untuk kemajuan ekosistem digital Indonesia.
 </div>
 
 </body>
