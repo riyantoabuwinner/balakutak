@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SecurityCleanup extends Command
 {
-    protected $signature = 'security:cleanup {--force : Jalankan pembersihan tanpa konfirmasi}';
+    protected $signature = 'security:cleanup {--force : Jalankan pembersihan tanpa konfirmasi} {--rotate-password= : Ubah otomatis akun yang masih memakai password default ("password") ke password baru}';
     protected $description = 'Bersihkan artefak serangan/pentest dari database dan direktori upload publik';
 
     public function handle(): int
@@ -153,12 +153,24 @@ class SecurityCleanup extends Command
             Cache::forget('site_settings');
         }
 
-        // Warn about any active users still using the default seeder password ('password')
-        $weakUsers = User::where('status', 'active')->get()->filter(fn($u) => Hash::check('password', $u->password));
+        // Check/rotate any users still using the default seeder password ('password')
+        $newPassword = $this->option('rotate-password');
+        $weakUsers = User::all()->filter(fn($u) => Hash::check('password', $u->password));
         if ($weakUsers->isNotEmpty()) {
-            $this->error('PERINGATAN KEAMANAN: Akun berikut masih memakai password default ("password") dan WAJIB segera diganti:');
-            foreach ($weakUsers as $wu) {
-                $this->warn("   -> {$wu->email} ({$wu->name})");
+            if (!empty($newPassword)) {
+                $hashed = Hash::make($newPassword);
+                foreach ($weakUsers as $wu) {
+                    $wu->forceFill([
+                        'password' => $hashed,
+                        'remember_token' => null,
+                    ])->save();
+                    $this->info(" - Password diperbarui untuk: {$wu->email} ({$wu->name})");
+                }
+            } else {
+                $this->error('PERINGATAN KEAMANAN: Akun berikut masih memakai password default ("password") dan WAJIB segera diganti:');
+                foreach ($weakUsers as $wu) {
+                    $this->warn("   -> {$wu->email} ({$wu->name})");
+                }
             }
         }
 
