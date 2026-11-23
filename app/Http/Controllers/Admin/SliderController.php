@@ -27,9 +27,13 @@ class SliderController extends Controller
             'title' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'image' => 'nullable|string',
-            'image_file' => 'nullable|image|max:4096',
+            'image_file' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:4096',
             'button_text' => 'nullable|string|max:50',
-            'button_url' => 'nullable|string|max:255',
+            'button_url' => ['nullable', 'string', 'max:255', function ($attr, $val, $fail) {
+                if ($val && !preg_match('/^(https?:\/\/|\/|#)/i', trim($val))) {
+                    $fail('URL tombol harus diawali dengan http://, https://, /, atau #.');
+                }
+            }],
             'order' => 'nullable|integer',
             'is_active' => 'boolean',
         ]);
@@ -61,9 +65,13 @@ class SliderController extends Controller
             'title' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'image' => 'nullable|string',
-            'image_file' => 'nullable|image|max:4096',
+            'image_file' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:4096',
             'button_text' => 'nullable|string|max:50',
-            'button_url' => 'nullable|string|max:255',
+            'button_url' => ['nullable', 'string', 'max:255', function ($attr, $val, $fail) {
+                if ($val && !preg_match('/^(https?:\/\/|\/|#)/i', trim($val))) {
+                    $fail('URL tombol harus diawali dengan http://, https://, /, atau #.');
+                }
+            }],
             'order' => 'nullable|integer',
             'is_active' => 'boolean',
         ]);

@@ -2,12 +2,24 @@
 
 namespace App\Console\Commands;
 
+use App\Models\AcademicCalendar;
+use App\Models\AcademicService;
 use App\Models\Announcement;
+use App\Models\Category;
+use App\Models\Document;
 use App\Models\Event;
+use App\Models\Faq;
 use App\Models\Gallery;
+use App\Models\Lecturer;
 use App\Models\Media;
 use App\Models\Page;
+use App\Models\Partner;
 use App\Models\Post;
+use App\Models\ResearchService;
+use App\Models\Slider;
+use App\Models\Sponsor;
+use App\Models\Tag;
+use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -24,7 +36,7 @@ class SecurityCleanup extends Command
             return self::SUCCESS;
         }
 
-        $titlePatterns = ['PENTEST%', 'P7611%', 'PT5932%', 'NormalItem%', 'Normalltem%', '%gal_shell%', 'foldertest'];
+        $titlePatterns = ['PENTEST%', 'P7611%', 'P7620%', 'PT5932%', 'NormalItem%', 'Normalltem%', '%gal_shell%', 'foldertest'];
         $spamTerms = ['Aurora Toto', 'MAXI188', 'Wukong778', 'slot777', 'unicorn778', '<script'];
 
         $cleanModel = function (string $modelClass, array $columns, string $label) use ($titlePatterns, $spamTerms) {
@@ -63,6 +75,18 @@ class SecurityCleanup extends Command
         $cleanModel(Media::class, ['original_name', 'filename', 'folder', 'path'], 'Media');
         $cleanModel(Page::class, ['title', 'content', 'slug'], 'Pages');
         $cleanModel(Event::class, ['title', 'description', 'content', 'slug'], 'Events');
+        $cleanModel(Slider::class, ['title', 'subtitle', 'button_text', 'button_url'], 'Sliders');
+        $cleanModel(Partner::class, ['name', 'description'], 'Partners');
+        $cleanModel(Sponsor::class, ['name'], 'Sponsors');
+        $cleanModel(Testimonial::class, ['name', 'content', 'company'], 'Testimonials');
+        $cleanModel(Category::class, ['name', 'slug'], 'Categories');
+        $cleanModel(Tag::class, ['name', 'slug'], 'Tags');
+        $cleanModel(Faq::class, ['question', 'answer'], 'FAQs');
+        $cleanModel(Document::class, ['title', 'description'], 'Documents');
+        $cleanModel(Lecturer::class, ['name', 'biography'], 'Lecturers');
+        $cleanModel(AcademicService::class, ['title', 'description'], 'AcademicServices');
+        $cleanModel(AcademicCalendar::class, ['title', 'description'], 'AcademicCalendars');
+        $cleanModel(ResearchService::class, ['title', 'abstract', 'content'], 'ResearchServices');
 
         // Also remove any Gallery or Media records pointing to dangerous file extensions (.html/.svg/.php/.phtml)
         $badExts = ['%.html', '%.htm', '%.svg', '%.php%', '%.phtml', '%.js'];
