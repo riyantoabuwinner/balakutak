@@ -335,67 +335,34 @@
             text-transform: uppercase;
         }
 
-        /* Unique Bottom-Left Security Badge (Pure CSS) */
-        .yanto-guard-badge {
+        /* Unique Bottom-Left Security Logo (Pure CSS) */
+        .yanto-guard-logo-wrap {
             position: fixed;
             bottom: 18px;
             left: 18px;
             z-index: 9999;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 15px 9px 11px;
-            border-radius: 14px;
-            background: rgba(15, 23, 42, 0.88);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(52, 211, 153, 0.45);
-            box-shadow: 0 10px 28px rgba(2, 6, 23, 0.45);
-            color: #f8fafc;
+            display: inline-block;
             user-select: none;
+            transition: transform 0.25s ease, filter 0.25s ease;
         }
 
-        .yanto-guard-icon {
-            position: relative;
-            width: 30px;
-            height: 30px;
-            border-radius: 9px;
-            background: linear-gradient(135deg, #10b981, #06b6d4);
-            color: #022c22;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+        .yanto-guard-logo-wrap:hover {
+            transform: scale(1.06) translateY(-2px);
         }
 
-        .yanto-guard-dot {
-            position: absolute;
-            top: -3px;
-            right: -3px;
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #34d399;
-            border: 2px solid #0f172a;
-        }
-
-        .yanto-guard-text {
-            font-size: 11px;
-            font-weight: 500;
-            color: #e2e8f0;
-            line-height: 1.35;
-        }
-
-        .yanto-guard-text strong {
-            color: #6ee7b7;
-            font-weight: 700;
+        .yanto-guard-logo-wrap img {
+            height: 82px;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 8px 18px rgba(2, 6, 23, 0.55));
         }
 
         @media (max-width: 768px) {
             .login-card { flex-direction: column; border-radius: 22px; }
             .login-brand { display: none; }
             .login-form-panel { width: 100%; padding: 32px 24px; }
-            .yanto-guard-badge { left: 12px; right: 12px; bottom: 12px; justify-content: center; }
+            .yanto-guard-logo-wrap { left: 12px; bottom: 12px; }
+            .yanto-guard-logo-wrap img { height: 60px; }
         }
     </style>
 </head>
@@ -509,18 +476,9 @@
         </div>
     </div>
 
-    {{-- Unique Protection Badge at Bottom-Left Corner --}}
-    <div class="yanto-guard-badge">
-        <div class="yanto-guard-icon">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 4v5c0 5-3.5 8.5-7 9.5-3.5-1-7-4.5-7-9.5V7l7-4z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 12.5l1.75 1.75L15 10.5"></path>
-            </svg>
-            <span class="yanto-guard-dot"></span>
-        </div>
-        <div class="yanto-guard-text">
-            Aplikasi ini dilengkapi <strong>"Yanto Sedunia Protection Guard"</strong>
-        </div>
+    {{-- Unique Protection Logo at Bottom-Left Corner --}}
+    <div class="yanto-guard-logo-wrap" title="Aplikasi ini dilengkapi Yanto Sedunia Protection Guard">
+        <img src="{{ asset('images/yanto-sedunia-guard.png') }}" alt="Yanto Sedunia Protection Guard">
     </div>
 
     <script>
