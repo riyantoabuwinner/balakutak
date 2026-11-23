@@ -46,7 +46,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', \App\Htt
 
     // Posts / Articles
     Route::middleware(['permission:view posts'])->group(function () {
-        Route::post('posts/import', [PostController::class , 'import'])->middleware('permission:create posts')->name('posts.import');
+        Route::post('posts/import', [PostController::class , 'import'])->middleware('role:Super Admin|Admin Prodi')->name('posts.import');
         Route::delete('posts/mass-destroy', [PostController::class , 'massDestroy'])->middleware('permission:delete posts')->name('posts.mass-destroy');
         Route::resource('posts', PostController::class);
         Route::patch('posts/{post}/toggle-status', [PostController::class , 'toggleStatus'])->middleware('permission:publish posts')->name('posts.toggle-status');

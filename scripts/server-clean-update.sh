@@ -22,13 +22,16 @@ find public/ -maxdepth 3 -type f \( -iname "*.php*" -o -iname "*.phtml" \) ! -pa
 echo ">>> [3/5] Memeriksa sisa string spam judi di view/public/config..."
 grep -rnE "Aurora Toto|MAXI188|Wukong778|slot777|unicorn778" app/ bootstrap/ config/ public/ resources/ routes/ 2>/dev/null || echo "Bersih: tidak ditemukan string spam pada kode aplikasi."
 
-echo ">>> [4/5] Mengatur permission & kepemilikan folder (www:www)..."
+echo ">>> [4/6] Membersihkan artefak pentest/spam dari database (Posts, Announcements, Gallery, Media, Users)..."
+php artisan security:cleanup --force
+
+echo ">>> [5/6] Mengatur permission & kepemilikan folder (www:www)..."
 if id "www" &>/dev/null; then
     chown -R www:www storage bootstrap/cache
 fi
 chmod -R 755 storage bootstrap/cache
 
-echo ">>> [5/5] Membersihkan seluruh cache Laravel..."
+echo ">>> [6/6] Membersihkan seluruh cache Laravel..."
 php artisan optimize:clear
 
 echo ">>> Selesai! Aplikasi telah bersih dan diperbarui ke commit terbaru:"

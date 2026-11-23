@@ -16,6 +16,13 @@ class AdminLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (auth()->check() && auth()->user()->status !== 'active') {
+            auth()->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')->withErrors(['email' => 'Akun Anda telah dinonaktifkan.']);
+        }
+
         $locale = session('admin_locale', 'id');
 
         if (!in_array($locale, ['en', 'id'])) {
