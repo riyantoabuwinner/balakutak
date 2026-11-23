@@ -335,34 +335,38 @@
             text-transform: uppercase;
         }
 
-        /* Unique Bottom-Left Security Logo (Pure CSS) */
-        .yanto-guard-logo-wrap {
-            position: fixed;
-            bottom: 18px;
-            left: 18px;
-            z-index: 9999;
-            display: inline-block;
-            user-select: none;
-            transition: transform 0.25s ease, filter 0.25s ease;
+        .protected-by-wrap {
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .yanto-guard-logo-wrap:hover {
-            transform: scale(1.06) translateY(-2px);
+        .protected-by-label {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(224, 231, 255, 0.65);
+            margin-bottom: 6px;
         }
 
-        .yanto-guard-logo-wrap img {
-            height: 82px;
+        .protected-by-logo {
+            height: 68px;
             width: auto;
             display: block;
-            filter: drop-shadow(0 8px 18px rgba(2, 6, 23, 0.55));
+            filter: drop-shadow(0 6px 16px rgba(2, 6, 23, 0.4));
+            transition: transform 0.25s ease;
+        }
+
+        .protected-by-logo:hover {
+            transform: scale(1.05);
         }
 
         @media (max-width: 768px) {
             .login-card { flex-direction: column; border-radius: 22px; }
             .login-brand { display: none; }
             .login-form-panel { width: 100%; padding: 32px 24px; }
-            .yanto-guard-logo-wrap { left: 12px; bottom: 12px; }
-            .yanto-guard-logo-wrap img { height: 60px; }
         }
     </style>
 </head>
@@ -393,6 +397,11 @@
 
                     <h2 class="login-brand-title">{{ \App\Models\Setting::get('site_name', 'Your Website Name') }}</h2>
                     <p class="login-brand-sub">{{ \App\Models\Setting::get('site_sub_name', 'Your Website Subname') }}</p>
+
+                    <div class="protected-by-wrap">
+                        <span class="protected-by-label">Protected by:</span>
+                        <img src="{{ asset('images/yanto-sedunia-guard.png') }}" alt="Yanto Sedunia Protection Guard" class="protected-by-logo">
+                    </div>
                 </div>
             </div>
 
@@ -474,11 +483,6 @@
                  style="{{ $siteLogoFooter ? '' : 'filter: grayscale(1) contrast(1.25) brightness(2);' }}">
             <span class="version-pill">V.2.1.0</span>
         </div>
-    </div>
-
-    {{-- Unique Protection Logo at Bottom-Left Corner --}}
-    <div class="yanto-guard-logo-wrap" title="Aplikasi ini dilengkapi Yanto Sedunia Protection Guard">
-        <img src="{{ asset('images/yanto-sedunia-guard.png') }}" alt="Yanto Sedunia Protection Guard">
     </div>
 
     <script>
