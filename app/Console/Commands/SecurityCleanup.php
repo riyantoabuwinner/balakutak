@@ -24,6 +24,7 @@ use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class SecurityCleanup extends Command
@@ -109,14 +110,15 @@ class SecurityCleanup extends Command
             foreach ($badExts as $ext) {
                 $q->orWhere('path', 'like', $ext);
             }
-        })->orWhere('original_name', 'one')->get();
+        })->orWhereIn('original_name', ['one', 'images.jpg'])->get();
         foreach ($badMedia as $m) {
             if ($m->path && Storage::disk('public')->exists($m->path)) {
                 Storage::disk('public')->delete($m->path);
             }
+            Gallery::where('file_path', $m->path)->delete();
             $m->delete();
         }
-        $this->line(" - Media (ekstensi berbahaya): {$badMedia->count()} entri dibersihkan.");
+        $this->line(" - Media (ekstensi berbahaya / file asing): {$badMedia->count()} entri dibersihkan.");
 
         // Clean suspicious pentest users or users without any assigned role
         $suspiciousUsers = User::withTrashed()
@@ -149,6 +151,15 @@ class SecurityCleanup extends Command
         }
         if ($resetSettingsCount > 0) {
             Cache::forget('site_settings');
+        }
+
+        // Warn about any active users still using the default seeder password ('password')
+        $weakUsers = User::where('status', 'active')->get()->filter(fn($u) => Hash::check('password', $u->password));
+        if ($weakUsers->isNotEmpty()) {
+            $this->error('PERINGATAN KEAMANAN: Akun berikut masih memakai password default ("password") dan WAJIB segera diganti:');
+            foreach ($weakUsers as $wu) {
+                $this->warn("   -> {$wu->email} ({$wu->name})");
+            }
         }
 
         $this->info('Pembersihan database selesai.');

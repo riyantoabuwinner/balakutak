@@ -149,6 +149,12 @@ class MediaController extends Controller
 
             $uploaded[] = $media;
             $urls[] = $media->url;
+
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($media)
+                ->withProperties(['ip' => $request->ip(), 'original_name' => $media->original_name, 'path' => $media->path])
+                ->log('Uploaded media file');
         }
 
         return response()->json([
