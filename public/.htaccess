@@ -5,6 +5,10 @@
 
     RewriteEngine On
 
+    # Security: Block execution/access of dangerous scripts inside uploaded storage & sensitive dotfiles
+    RewriteRule ^storage/.*\.(php|phtml|php3|php4|php5|php7|phar|pl|py|jsp|asp|sh|cgi|html|htm|svg)$ - [F,L,NC]
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|package(-lock)?\.json) - [F,L,NC]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
