@@ -36,7 +36,7 @@ class SecurityCleanup extends Command
             return self::SUCCESS;
         }
 
-        $titlePatterns = ['PENTEST%', 'P7611%', 'P7620%', 'PT5932%', 'NormalItem%', 'Normalltem%', '%gal_shell%', 'foldertest'];
+        $titlePatterns = ['%PENTEST%', '%P7611%', '%P7620%', '%PT5932%', '%NormalItem%', '%Normalltem%', '%gal_shell%', 'foldertest'];
         $spamTerms = ['Aurora Toto', 'MAXI188', 'Wukong778', 'slot777', 'unicorn778', '<script'];
 
         $cleanModel = function (string $modelClass, array $columns, string $label) use ($titlePatterns, $spamTerms) {
