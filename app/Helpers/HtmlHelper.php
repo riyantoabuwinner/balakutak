@@ -48,7 +48,7 @@ class HtmlHelper
         $dom = new \DOMDocument();
         libxml_use_internal_errors(true);
         $dom->loadHTML(
-            '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><div>' . $htmlProcessed . '</div>',
+            '<?xml encoding="utf-8" ?><div id="__safe_html_root__">' . $htmlProcessed . '</div>',
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
         );
         libxml_clear_errors();
@@ -103,7 +103,7 @@ class HtmlHelper
 
         // 4. Retrieve the inner HTML of our wrapper div
         $output = '';
-        $wrapper = $dom->getElementsByTagName('div')->item(0);
+        $wrapper = $dom->getElementById('__safe_html_root__') ?: $xpath->query('//*[@id="__safe_html_root__"]')->item(0);
         if ($wrapper) {
             foreach ($wrapper->childNodes as $child) {
                 $output .= $dom->saveHTML($child);
@@ -111,6 +111,7 @@ class HtmlHelper
         } else {
             $output = $dom->saveHTML();
         }
+        $output = str_replace('<?xml encoding="utf-8" ?>', '', $output);
 
         // 5. Restore preserved <style> blocks
         foreach ($preservedStyles as $placeholder => $original) {
